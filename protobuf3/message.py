@@ -76,3 +76,13 @@ class Message(object):
                     self.__wire_message[field_number] = [WireField(type=field_type, value=field_value)]
         except StopIteration:
             pass
+
+    def _get_wire_values(self, field_number):
+        return self.__wire_message[field_number]
+
+    def parse_from_bytes(self, bytes_array):
+        self.__wire_message = {}
+        input_iterator = iter(bytes_array)
+        self._decode_raw_message(input_iterator)
+        # TODO: validate wire type mismatching
+

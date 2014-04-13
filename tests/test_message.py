@@ -63,3 +63,18 @@ class TestMessage(TestCase):
         expected_message = {1: [WireField(type=Message.FIELD_FIXED32, value=[0x01, 0x02, 0x03, 0x04])]}
         tmp._decode_raw_message(iter(data))
         self.assertDictEqual(tmp._Message__wire_message, expected_message)
+
+    def test_get_wire_values(self):
+        tmp = Message()
+
+        data = [0x08, 0x96, 0x01]
+        tmp.parse_from_bytes(data)
+        self.assertEqual(tmp._get_wire_values(1), [WireField(type=Message.FIELD_VARINT, value=150)])
+
+    def test_parse_from_bytes(self):
+        tmp = Message()
+
+        data = [0x08, 0x96, 0x01]
+        expected_message = {1: [WireField(type=Message.FIELD_VARINT, value=150)]}
+        tmp.parse_from_bytes(data)
+        self.assertDictEqual(tmp._Message__wire_message, expected_message)
