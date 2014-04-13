@@ -80,6 +80,10 @@ class Message(object):
     def _get_wire_values(self, field_number):
         return self.__wire_message.get(field_number, [])
 
+    def _set_wire_values(self, field_number, field_type, field_value):
+        # TODO: add support for repeated fields
+        self.__wire_message[field_number] = [WireField(type=field_type, value=field_value)]
+
     def parse_from_bytes(self, bytes_array):
         self.__wire_message = {}
         input_iterator = iter(bytes_array)

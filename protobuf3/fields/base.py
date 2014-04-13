@@ -1,5 +1,6 @@
 class BaseField(object):
     DEFAULT_VALUE = None
+    WIRE_TYPE = -1
 
     def __init__(self, field_number=None, required=False, optional=False, repeated=False):
         assert isinstance(field_number, int)
@@ -15,6 +16,12 @@ class BaseField(object):
     def _convert_to_final_type(self, value):
         return value
 
+    def _convert_to_wire_type(self, value):
+        return value
+
+    def _validate(self, value):
+        return True
+
     def __get__(self, instance, owner):
         wire_values = instance._get_wire_values(self.__field_number)
 
@@ -29,3 +36,9 @@ class BaseField(object):
             pass
             # TODO: implement support for repeated values
         return final_values
+
+    def __set__(self, instance, value):
+        if not self._validate(value):
+            raise ValueError
+
+        instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value))

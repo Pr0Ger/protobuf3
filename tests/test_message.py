@@ -71,6 +71,12 @@ class TestMessage(TestCase):
         tmp.parse_from_bytes(data)
         self.assertEqual(tmp._get_wire_values(1), [WireField(type=Message.FIELD_VARINT, value=150)])
 
+    def test_set_wire_values(self):
+        tmp = Message()
+
+        tmp._set_wire_values(1, Message.FIELD_VARINT, 150)
+        self.assertDictEqual(tmp._Message__wire_message, {1: [WireField(type=Message.FIELD_VARINT, value=150)]})
+
     def test_parse_from_bytes(self):
         tmp = Message()
 

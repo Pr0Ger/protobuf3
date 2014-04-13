@@ -20,3 +20,10 @@ class TestStringField(TestCase):
         msg = self.msg_cls()
 
         self.assertEqual(msg.b, '')
+
+    def test_set(self):
+        msg = self.msg_cls()
+
+        msg.b = 'test'
+
+        self.assertEqual(msg.b, 'test')
