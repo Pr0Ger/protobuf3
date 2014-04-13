@@ -1,3 +1,4 @@
+from protobuf3.fields.string import StringField
 from protobuf3.message import Message, WireField
 from unittest import TestCase
 
@@ -63,6 +64,14 @@ class TestMessage(TestCase):
         expected_message = {1: [WireField(type=Message.FIELD_FIXED32, value=b'\x01\x02\x03\x04')]}
         tmp._decode_raw_message(iter(data))
         self.assertDictEqual(tmp._Message__wire_message, expected_message)
+
+    def test_decode_incorrect_field_signature(self):
+        class StringTestMessage(Message):
+            b = StringField(field_number=1)
+
+        msg = StringTestMessage()
+        data = [0x08, 0x96, 0x01]
+        self.assertRaises(ValueError, msg._decode_raw_message, iter(data))
 
     def test_get_wire_values(self):
         tmp = Message()

@@ -13,6 +13,10 @@ class BaseField(object):
         self.__optional = optional
         self.__repeated = repeated
 
+    @property
+    def field_number(self):
+        return self.__field_number
+
     def _convert_to_final_type(self, value):
         return value
 

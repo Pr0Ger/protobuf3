@@ -1,6 +1,6 @@
 from collections import namedtuple
 from functools import reduce
-
+from protobuf3.fields.base import BaseField
 
 WireField = namedtuple('WireField', ['type', 'value'])
 
@@ -15,6 +15,11 @@ class Message(object):
 
     def __init__(self):
         self.__wire_message = {}
+
+        self.__fields = {}
+        for (field_name, field_object) in self.__class__.__dict__.items():
+            if isinstance(field_object, BaseField):
+                self.__fields[field_object.field_number] = field_object
 
     @staticmethod
     def _decode_field_signature(input_iterator):
@@ -58,6 +63,10 @@ class Message(object):
         try:
             while True:
                 field_type, field_number, field_length = Message._decode_field_signature(input_iterator)
+                field_object = self.__fields.get(field_number, BaseField(field_number))
+
+                if field_type != field_object.WIRE_TYPE and field_object.WIRE_TYPE != -1:
+                    raise ValueError
 
                 if field_type == Message.FIELD_VARINT:
                     field_value = Message._decode_varint(input_iterator)
@@ -88,5 +97,4 @@ class Message(object):
         self.__wire_message = {}
         input_iterator = iter(bytes_array)
         self._decode_raw_message(input_iterator)
-        # TODO: validate wire type mismatching
 
