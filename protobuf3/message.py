@@ -1,4 +1,8 @@
+from collections import namedtuple
 from functools import reduce
+
+
+WireField = namedtuple('WireField', ['type', 'value'])
 
 
 class Message(object):
@@ -10,7 +14,7 @@ class Message(object):
     FIELD_FIXED32 = 5
 
     def __init__(self):
-        pass
+        self.__wire_message = {}
 
     @staticmethod
     def _decode_field_signature(input_iterator):
@@ -43,3 +47,17 @@ class Message(object):
                                   [(1 << 7) ** i for i in range(len(result))]
                               )
                 )
+
+    def _decode_raw_message(self, input_iterator):
+        try:
+            while True:
+                field_type, field_number, field_length = Message._decode_field_signature(input_iterator)
+
+                if field_type == Message.FIELD_VARINT:
+                    field_value = Message._decode_varint(input_iterator)
+                else:
+                    raise NotImplementedError
+
+                self.__wire_message[field_number] = WireField(type=field_type, value=field_value)
+        except StopIteration:
+            pass

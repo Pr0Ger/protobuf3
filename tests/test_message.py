@@ -1,4 +1,4 @@
-from protobuf3.message import Message
+from protobuf3.message import Message, WireField
 from unittest import TestCase
 
 
@@ -30,3 +30,11 @@ class TestMessage(TestCase):
 
         data = [0b10101100, 0b00000010]
         self.assertEqual(tmp._decode_varint(iter(data)), 300)
+
+    def test_decode_raw_message(self):
+        tmp = Message()
+
+        data = [0x08, 0x96, 0x01]
+        expected_message = {1: WireField(type=0, value=150)}
+        tmp._decode_raw_message(iter(data))
+        self.assertDictEqual(tmp._Message__wire_message, expected_message)
