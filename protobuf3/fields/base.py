@@ -4,6 +4,9 @@ class BaseField(object):
     def __init__(self, field_number=None, required=False, optional=False, repeated=False):
         assert isinstance(field_number, int)
 
+        if repeated:
+            raise NotImplementedError("Repeated fields doesn't supported yet")
+
         self.__field_number = field_number
         self.__required = required
         self.__optional = optional
