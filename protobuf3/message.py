@@ -49,6 +49,12 @@ class Message(object):
                 )
 
     def _decode_raw_message(self, input_iterator):
+        def __read_n_bytes(n):
+            result = []
+            for _ in range(n):
+                result.append(next(input_iterator))
+            return result
+
         try:
             while True:
                 field_type, field_number, field_length = Message._decode_field_signature(input_iterator)
@@ -56,13 +62,11 @@ class Message(object):
                 if field_type == Message.FIELD_VARINT:
                     field_value = Message._decode_varint(input_iterator)
                 elif field_type == Message.FIELD_FIXED64:
-                    field_value = []
-                    for _ in range(8):
-                        field_value.append(next(input_iterator))
+                    field_value = __read_n_bytes(8)
+                elif field_type == Message.FIELD_VARIABLE_LENGTH:
+                    field_value = __read_n_bytes(field_length)
                 elif field_type == Message.FIELD_FIXED32:
-                    field_value = []
-                    for _ in range(4):
-                        field_value.append(next(input_iterator))
+                    field_value = __read_n_bytes(4)
                 else:
                     raise NotImplementedError
 
