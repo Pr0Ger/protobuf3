@@ -50,10 +50,10 @@ class Message(object):
 
     def _decode_raw_message(self, input_iterator):
         def __read_n_bytes(n):
-            result = []
+            result = bytearray()
             for _ in range(n):
                 result.append(next(input_iterator))
-            return result
+            return bytes(result)
 
         try:
             while True:
