@@ -20,6 +20,7 @@ class Message(object):
         for (field_name, field_object) in self.__class__.__dict__.items():
             if isinstance(field_object, BaseField):
                 self.__fields[field_object.field_number] = field_object
+                field_object.field_name = field_name
 
     @staticmethod
     def _decode_field_signature(input_iterator):
@@ -86,6 +87,16 @@ class Message(object):
         except StopIteration:
             pass
 
+    def _check_required_fields(self):
+        missing_fields = []
+
+        for (field_number, field_object) in self.__fields.items():
+            if field_object.required and field_number not in self.__wire_message:
+                missing_fields.append(field_object.field_name)
+
+        if missing_fields:
+            raise KeyError("Some required fields are missing: " + ", ".join(missing_fields))
+
     def _get_wire_values(self, field_number):
         return self.__wire_message.get(field_number, [])
 
@@ -97,4 +108,6 @@ class Message(object):
         self.__wire_message = {}
         input_iterator = iter(bytes_array)
         self._decode_raw_message(input_iterator)
+
+        self._check_required_fields()
 

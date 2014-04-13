@@ -8,14 +8,27 @@ class BaseField(object):
         if repeated:
             raise NotImplementedError("Repeated fields doesn't supported yet")
 
+        self.__field_name = "undefined"
         self.__field_number = field_number
         self.__required = required
         self.__optional = optional
         self.__repeated = repeated
 
     @property
+    def field_name(self):
+        return self.__field_name
+
+    @field_name.setter
+    def field_name(self, value):
+        self.__field_name = value
+
+    @property
     def field_number(self):
         return self.__field_number
+
+    @property
+    def required(self):
+        return self.__required
 
     def _convert_to_final_type(self, value):
         return value

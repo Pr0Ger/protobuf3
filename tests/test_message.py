@@ -73,6 +73,13 @@ class TestMessage(TestCase):
         data = [0x08, 0x96, 0x01]
         self.assertRaises(ValueError, msg._decode_raw_message, iter(data))
 
+    def test_check_required_fields(self):
+        class StringTestMessage(Message):
+            b = StringField(field_number=1, required=1)
+
+        msg = StringTestMessage()
+        self.assertRaises(KeyError, msg._check_required_fields)
+
     def test_get_wire_values(self):
         tmp = Message()
 
