@@ -78,7 +78,7 @@ class Message(object):
             pass
 
     def _get_wire_values(self, field_number):
-        return self.__wire_message[field_number]
+        return self.__wire_message.get(field_number, [])
 
     def parse_from_bytes(self, bytes_array):
         self.__wire_message = {}
