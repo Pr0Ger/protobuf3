@@ -55,6 +55,14 @@ class Message(object):
 
                 if field_type == Message.FIELD_VARINT:
                     field_value = Message._decode_varint(input_iterator)
+                elif field_type == Message.FIELD_FIXED64:
+                    field_value = []
+                    for _ in range(8):
+                        field_value.append(next(input_iterator))
+                elif field_type == Message.FIELD_FIXED32:
+                    field_value = []
+                    for _ in range(4):
+                        field_value.append(next(input_iterator))
                 else:
                     raise NotImplementedError
 
