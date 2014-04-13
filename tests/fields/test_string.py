@@ -25,5 +25,12 @@ class TestStringField(TestCase):
         msg = self.msg_cls()
 
         msg.b = 'test'
-
         self.assertEqual(msg.b, 'test')
+
+    def test_invalid_set(self):
+        msg = self.msg_cls()
+
+        def failure():
+            msg.b = 123
+
+        self.assertRaises(ValueError, failure)
