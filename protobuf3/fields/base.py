@@ -11,6 +11,8 @@ class BaseField(object):
         self.__optional = optional
         self.__repeated = repeated
 
+        self.__instance = None  # Some kind of dirty hack for __len__, will be assigned in __get__
+
     @property
     def field_name(self):
         return self.__field_name
@@ -45,13 +47,25 @@ class BaseField(object):
             final_values.append(self.__class__.DEFAULT_VALUE)
 
         if self.__repeated:
-            raise ValueError("Repe")
+            self.__instance = instance  # __len__ should know it, but only __get__ receive it as parameter
+            return self
         else:
             final_values = final_values[0]
             return final_values
+
+    def __getitem__(self, item):
+        raise NotImplementedError
 
     def __set__(self, instance, value):
         if not self._validate(value):
             raise ValueError
 
         instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value))
+
+    def __len__(self):
+        assert self.__instance
+
+        if self.__repeated:
+            return len(self.__instance._get_wire_values(self.__field_number))
+        else:
+            raise TypeError("Using len() isn't allowed for not repeated fields")
