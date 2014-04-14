@@ -1,6 +1,3 @@
-from protobuf3.repeated_field_wrapper import RepeatedFieldWrapper
-
-
 class BaseField(object):
     DEFAULT_VALUE = None
     WIRE_TYPE = -1
@@ -48,7 +45,7 @@ class BaseField(object):
             final_values.append(self.__class__.DEFAULT_VALUE)
 
         if self.__repeated:
-            return RepeatedFieldWrapper(instance, self.__field_number)
+            raise ValueError("Repe")
         else:
             final_values = final_values[0]
             return final_values
