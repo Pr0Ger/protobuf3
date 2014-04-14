@@ -1,12 +1,12 @@
+from protobuf3.repeated_field_wrapper import RepeatedFieldWrapper
+
+
 class BaseField(object):
     DEFAULT_VALUE = None
     WIRE_TYPE = -1
 
     def __init__(self, field_number=None, required=False, optional=False, repeated=False):
         assert isinstance(field_number, int)
-
-        if repeated:
-            raise NotImplementedError("Repeated fields doesn't supported yet")
 
         self.__field_name = "undefined"
         self.__field_number = field_number
@@ -47,12 +47,11 @@ class BaseField(object):
         if not final_values:
             final_values.append(self.__class__.DEFAULT_VALUE)
 
-        if not self.__repeated:
-            final_values = final_values[0]
+        if self.__repeated:
+            return RepeatedFieldWrapper(instance, self.__field_number)
         else:
-            pass
-            # TODO: implement support for repeated values
-        return final_values
+            final_values = final_values[0]
+            return final_values
 
     def __set__(self, instance, value):
         if not self._validate(value):

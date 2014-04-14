@@ -1,5 +1,7 @@
 from protobuf3.fields.base import BaseField
+from protobuf3.fields.string import StringField
 from protobuf3.message import Message
+from protobuf3.repeated_field_wrapper import RepeatedFieldWrapper
 from unittest import TestCase
 
 
@@ -13,3 +15,10 @@ class TestBaseField(TestCase):
 
         msg = EmptyMessage()
         self.assertEqual(msg.a, None)
+
+    def test_get_repeated_field(self):
+        class TestMessage(Message):
+            a = StringField(field_number=1, repeated=True)
+
+        msg = TestMessage()
+        self.assertTrue(type(msg.a) == RepeatedFieldWrapper)
