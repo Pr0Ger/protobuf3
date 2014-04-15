@@ -11,7 +11,7 @@ class BaseField(object):
         self.__optional = optional
         self.__repeated = repeated
 
-        self.__instance = None  # Some kind of dirty hack for __len__, will be assigned in __get__
+        self.__instance = None  # Some kind of dirty hack for list access methods, will be assigned in __get__
 
     @property
     def field_name(self):
@@ -54,7 +54,14 @@ class BaseField(object):
             return final_values
 
     def __getitem__(self, item):
-        raise NotImplementedError
+        assert self.__repeated
+
+        if isinstance(item, slice):
+            raise NotImplementedError
+
+        wire_value = self.__instance._get_wire_values(self.__field_number)[item]
+
+        return self._convert_to_final_type(wire_value.value)
 
     def __set__(self, instance, value):
         if not self._validate(value):
