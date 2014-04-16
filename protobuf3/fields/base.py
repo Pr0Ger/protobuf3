@@ -86,8 +86,5 @@ class BaseField(object):
     def append(self, value):
         assert self.__instance
 
-        if self.__repeated:
-            self.__instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value),
+        self.__instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value),
                                              append=True)
-        else:
-            raise TypeError("Using append() isn't allowed for not repeated fields")
