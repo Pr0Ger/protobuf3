@@ -82,3 +82,12 @@ class BaseField(object):
             return len(self.__instance._get_wire_values(self.__field_number))
         else:
             raise TypeError("Using len() isn't allowed for not repeated fields")
+
+    def append(self, value):
+        assert self.__instance
+
+        if self.__repeated:
+            self.__instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value),
+                                             append=True)
+        else:
+            raise TypeError("Using append() isn't allowed for not repeated fields")
