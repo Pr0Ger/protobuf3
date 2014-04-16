@@ -11,6 +11,7 @@ class TestBaseField(TestCase):
 
         class TestMessage(Message):
             a = StringField(field_number=1, repeated=True)
+            b = StringField(field_number=2, repeated=True)
 
         raw_message = [
             0x0A, 0x07, 0x74, 0x65, 0x73, 0x74, 0x69, 0x6E, 0x67,
@@ -44,3 +45,10 @@ class TestBaseField(TestCase):
 
         self.repeated_msg.a[0] = 'not testing'
         self.assertEqual(self.repeated_msg.a[0], 'not testing')
+
+    def test_append(self):
+        self.assertEqual(len(self.repeated_msg.b), 0)
+
+        self.repeated_msg.b.append('test')
+        self.assertEqual(len(self.repeated_msg.b), 1)
+        self.assertEqual(self.repeated_msg.b[0], 'test')
