@@ -73,6 +73,15 @@ class TestMessage(TestCase):
         data = [0x08, 0x96, 0x01]
         self.assertRaises(ValueError, msg._decode_raw_message, iter(data))
 
+    def test_decode_repeated_field_with_different_types(self):
+        raw_message = [
+            0x08, 0x96, 0x01,
+            0x0D, 0x01, 0x02, 0x03, 0x04
+        ]
+
+        msg = Message()
+        self.assertRaises(ValueError, msg.parse_from_bytes, raw_message)
+
     def test_check_required_fields(self):
         class StringTestMessage(Message):
             b = StringField(field_number=1, required=1)

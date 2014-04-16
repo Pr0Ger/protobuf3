@@ -81,6 +81,9 @@ class Message(object):
                     raise NotImplementedError
 
                 if field_number in self.__wire_message:
+                    if self.__wire_message[field_number][0].type != field_type:
+                        raise ValueError
+
                     self.__wire_message[field_number].append(WireField(type=field_type, value=field_value))
                 else:
                     self.__wire_message[field_number] = [WireField(type=field_type, value=field_value)]
