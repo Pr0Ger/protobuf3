@@ -38,3 +38,9 @@ class TestBaseField(TestCase):
         self.assertEqual(self.repeated_msg.a[1], 'testing1')
 
         self.assertRaises(IndexError, lambda: self.repeated_msg.a[3])
+
+    def test_set_item(self):
+        self.assertEqual(self.repeated_msg.a[0], 'testing')
+
+        self.repeated_msg.a[0] = 'not testing'
+        self.assertEqual(self.repeated_msg.a[0], 'not testing')

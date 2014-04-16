@@ -63,6 +63,12 @@ class BaseField(object):
 
         return self._convert_to_final_type(wire_value.value)
 
+    def __setitem__(self, key, value):
+        if not self._validate(value):
+            raise ValueError
+
+        self.__instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value), key)
+
     def __set__(self, instance, value):
         if not self._validate(value):
             raise ValueError
