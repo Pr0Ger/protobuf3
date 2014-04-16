@@ -106,7 +106,7 @@ class Message(object):
         if append:
             self.__wire_message[field_number].append(WireField(type=field_type, value=field_value))
         elif insert:
-            self.__wire_message[field_number].append(WireField(type=field_type, value=field_value))
+            self.__wire_message[field_number].insert(index, WireField(type=field_type, value=field_value))
         elif index:
             self.__wire_message[field_number][index] = WireField(type=field_type, value=field_value)
         else:

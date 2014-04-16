@@ -87,4 +87,10 @@ class BaseField(object):
         assert self.__instance
 
         self.__instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value),
-                                             append=True)
+                                         append=True)
+
+    def insert(self, index, value):
+        assert self.__instance
+
+        self.__instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value),
+                                         index=index, insert=True)

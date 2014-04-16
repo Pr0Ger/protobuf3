@@ -52,3 +52,16 @@ class TestBaseField(TestCase):
         self.repeated_msg.b.append('test')
         self.assertEqual(len(self.repeated_msg.b), 1)
         self.assertEqual(self.repeated_msg.b[0], 'test')
+
+    def test_insert(self):
+        self.assertEqual(2, len(self.repeated_msg.a))
+        self.assertEqual(self.repeated_msg.a[0], 'testing')
+        self.assertEqual(self.repeated_msg.a[1], 'testing1')
+
+        self.repeated_msg.a.insert(1, 'middle testing')
+
+        self.assertEqual(3, len(self.repeated_msg.a))
+        self.assertEqual(self.repeated_msg.a[0], 'testing')
+        self.assertEqual(self.repeated_msg.a[1], 'middle testing')
+        self.assertEqual(self.repeated_msg.a[2], 'testing1')
+
