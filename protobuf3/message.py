@@ -101,6 +101,8 @@ class Message(object):
         return self.__wire_message.get(field_number, [])
 
     def _set_wire_values(self, field_number, field_type, field_value, index=None, insert=False, append=False):
+        if field_number not in self.__wire_message:
+            self.__wire_message[field_number] = []
         if append:
             self.__wire_message[field_number].append(WireField(type=field_type, value=field_value))
         elif insert:
