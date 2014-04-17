@@ -29,6 +29,14 @@ class BaseField(object):
     def required(self):
         return self.__required
 
+    @property
+    def optional(self):
+        return self.__optional
+
+    @property
+    def repeated(self):
+        return self.__repeated
+
     def _convert_to_final_type(self, value):
         return value
 
