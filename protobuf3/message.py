@@ -13,14 +13,20 @@ class Message(object):
     FIELD_END_GROUP = 4
     FIELD_FIXED32 = 5
 
+    __fields = None
+
+    def __new__(cls, *args):
+        if not cls.__fields:
+            cls.__fields = {}
+            for (field_name, field_object) in cls.__dict__.items():
+                if isinstance(field_object, BaseField):
+                    cls.__fields[field_object.field_number] = field_object
+                    field_object.field_name = field_name
+
+        return super().__new__(cls, *args)
+
     def __init__(self):
         self.__wire_message = {}
-
-        self.__fields = {}
-        for (field_name, field_object) in self.__class__.__dict__.items():
-            if isinstance(field_object, BaseField):
-                self.__fields[field_object.field_number] = field_object
-                field_object.field_name = field_name
 
     @staticmethod
     def _decode_field_signature(input_iterator):
