@@ -136,6 +136,12 @@ class TestMessage(TestCase):
 
         self.assertEqual(msg.encode_to_bytes(), expected)
 
+    def test_encode_to_bytes_varint(self):
+        msg = Message()
+        msg.parse_from_bytes(b'\x08\x96\x01')
+
+        self.assertEqual(msg.encode_to_bytes(), b'\x08\x96\x01')
+
     def test_encode_to_bytes_repeated_order(self):
         class EncodedMessage(Message):
             a = StringField(field_number=2, repeated=True)
@@ -147,3 +153,17 @@ class TestMessage(TestCase):
         expected = b'\x12\x04\x74\x65\x73\x74\x12\x05\x74\x65\x73\x74\x31'
 
         self.assertEqual(msg.encode_to_bytes(), expected)
+
+    def test_encode_ignore_unknown(self):
+        class EncodedMessage(Message):
+            a = StringField(field_number=2)
+
+        # Two fields: 1: int, 2: str
+        original_msg = b'\x08\x96\x01\x12\x07\x74\x65\x73\x74\x69\x6E\x67'
+
+        msg = EncodedMessage()
+
+        msg.parse_from_bytes(original_msg)
+
+        self.assertEqual(msg.encode_to_bytes(), original_msg)
+        self.assertEqual(msg.encode_to_bytes(True), b'\x12\x07\x74\x65\x73\x74\x69\x6E\x67')

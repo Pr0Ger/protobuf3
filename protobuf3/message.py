@@ -157,14 +157,23 @@ class Message(object):
 
         self._check_required_fields()
 
-    def encode_to_bytes(self):
+    def encode_to_bytes(self, ignore_unknown=False):
         self._check_required_fields()
 
         result = []
 
         for field_number in sorted(self.__wire_message.keys()):
+            if ignore_unknown and field_number not in self.__fields:
+                continue
+
             for it in self.__wire_message[field_number]:
-                result.append(Message._encode_field_signature(it.type, field_number, len(it.value)))
-                result.append(it.value)
+                field_len = len(it.value) if it.type == Message.FIELD_VARIABLE_LENGTH else None
+
+                result.append(Message._encode_field_signature(it.type, field_number, field_len))
+
+                if it.type == Message.FIELD_VARINT:
+                    result.append(Message._encode_varint(it.value))
+                else:
+                    result.append(it.value)
 
         return b''.join(result)
