@@ -20,6 +20,14 @@ class TestMessage(TestCase):
         data = [0b00001111]
         self.assertRaises(ValueError, tmp._decode_field_signature, iter(data))
 
+    def test_encode_field_signature(self):
+        tmp = Message()
+
+        self.assertEqual(tmp._encode_field_signature(0, 1), b'\x08')
+        self.assertEqual(tmp._encode_field_signature(2, 2, 7), b'\x12\x07')
+        self.assertRaises(ValueError, tmp._encode_field_signature, 10, 1)
+        self.assertRaises(AssertionError, tmp._encode_field_signature, 2, 2)
+
     def test_decode_varint(self):
         tmp = Message()
 
@@ -31,6 +39,13 @@ class TestMessage(TestCase):
 
         data = [0b10101100, 0b00000010]
         self.assertEqual(tmp._decode_varint(iter(data)), 300)
+
+    def test_encode_varint(self):
+        tmp = Message()
+
+        self.assertEqual(tmp._encode_varint(1), b'\x01')
+        self.assertEqual(tmp._encode_varint(150), b'\x96\x01')
+        self.assertEqual(tmp._encode_varint(300), b'\xAC\x02')
 
     def test_decode_raw_message(self):
         # FIELD_VARINT
@@ -109,3 +124,26 @@ class TestMessage(TestCase):
         expected_message = {1: [WireField(type=Message.FIELD_VARINT, value=150)]}
         tmp.parse_from_bytes(data)
         self.assertDictEqual(tmp._Message__wire_message, expected_message)
+
+    def test_encode_to_bytes(self):
+        class EncodedMessage(Message):
+            a = StringField(field_number=2)
+
+        msg = EncodedMessage()
+        msg.a = 'test'
+
+        expected = b'\x12\x04\x74\x65\x73\x74'
+
+        self.assertEqual(msg.encode_to_bytes(), expected)
+
+    def test_encode_to_bytes_repeated_order(self):
+        class EncodedMessage(Message):
+            a = StringField(field_number=2, repeated=True)
+
+        msg = EncodedMessage()
+        msg.a.append('test')
+        msg.a.append('test1')
+
+        expected = b'\x12\x04\x74\x65\x73\x74\x12\x05\x74\x65\x73\x74\x31'
+
+        self.assertEqual(msg.encode_to_bytes(), expected)

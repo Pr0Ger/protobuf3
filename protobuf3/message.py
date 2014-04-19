@@ -47,6 +47,21 @@ class Message(object):
         return field_type, field_number, field_length
 
     @staticmethod
+    def _encode_field_signature(field_type, field_number, field_length=None):
+        if field_type not in (
+                Message.FIELD_VARINT, Message.FIELD_FIXED64, Message.FIELD_VARIABLE_LENGTH, Message.FIELD_FIXED32):
+            raise ValueError("Unknown field type for serialization")
+
+        result = Message._encode_varint((field_number << 3) | field_type)
+
+        if field_type == Message.FIELD_VARIABLE_LENGTH:
+            assert field_length
+
+            result += Message._encode_varint(field_length)
+
+        return result
+
+    @staticmethod
     def _decode_varint(input_iterator):
         result = []
         while True:
@@ -59,6 +74,20 @@ class Message(object):
                                   [(1 << 7) ** i for i in range(len(result))]
                               )
                 )
+
+    @staticmethod
+    def _encode_varint(number):
+        result = []
+
+        while number:
+            next_byte = number % 128
+            number //= 128
+
+            if number:
+                next_byte |= 1 << 7
+            result.append(next_byte)
+
+        return bytes(result)
 
     def _decode_raw_message(self, input_iterator):
         def __read_n_bytes(n):
@@ -128,3 +157,14 @@ class Message(object):
 
         self._check_required_fields()
 
+    def encode_to_bytes(self):
+        self._check_required_fields()
+
+        result = []
+
+        for field_number in sorted(self.__wire_message.keys()):
+            for it in self.__wire_message[field_number]:
+                result.append(Message._encode_field_signature(it.type, field_number, len(it.value)))
+                result.append(it.value)
+
+        return b''.join(result)
