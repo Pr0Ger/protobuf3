@@ -14,7 +14,7 @@ class FloatField(BaseField):
         return pack('<f', value)
 
     def _validate(self, value):
-        return isinstance(value, (float, int)) and -2 ** 31 <= value < 2 ** 31
+        return isinstance(value, (float, int))
 
 
 
