@@ -64,4 +64,3 @@ class TestBaseField(TestCase):
         self.assertEqual(self.repeated_msg.a[0], 'testing')
         self.assertEqual(self.repeated_msg.a[1], 'middle testing')
         self.assertEqual(self.repeated_msg.a[2], 'testing1')
-

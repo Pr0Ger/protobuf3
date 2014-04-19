@@ -15,4 +15,3 @@ class Fixed32Field(BaseField):
 
     def _validate(self, value):
         return isinstance(value, int) and 0 <= value < 2 ** 32
-

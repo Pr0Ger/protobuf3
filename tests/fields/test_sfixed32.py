@@ -50,5 +50,3 @@ class TestSFixed32Field(TestCase):
 
         self.assertRaises(ValueError, failure)
         self.assertRaises(ValueError, failure_overflow)
-
-

@@ -42,4 +42,3 @@ class TestFixed32Field(TestCase):
         self.assertRaises(ValueError, failure)
         self.assertRaises(ValueError, failure_negative)
         self.assertRaises(ValueError, failure_overflow)
-

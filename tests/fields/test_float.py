@@ -34,5 +34,3 @@ class TestFloatField(TestCase):
             msg.a = 'test'
 
         self.assertRaises(ValueError, failure)
-
-
