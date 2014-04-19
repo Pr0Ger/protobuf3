@@ -33,10 +33,6 @@ class TestFloatField(TestCase):
         def failure():
             msg.a = 'test'
 
-        def failure_overflow():
-            msg.a = 2 ** 40
-
         self.assertRaises(ValueError, failure)
-        self.assertRaises(ValueError, failure_overflow)
 
 
