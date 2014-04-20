@@ -8,10 +8,10 @@ class Fixed64Field(BaseField):
     WIRE_TYPE = Message.FIELD_FIXED64
 
     def _convert_to_final_type(self, value):
-        return unpack('<q', value)[0]
+        return unpack('<Q', value)[0]
 
     def _convert_to_wire_type(self, value):
-        return pack('<q', value)
+        return pack('<Q', value)
 
     def _validate(self, value):
         return isinstance(value, int) and 0 <= value < 2 ** 64
