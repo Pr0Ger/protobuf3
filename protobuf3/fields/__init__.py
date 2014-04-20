@@ -8,3 +8,5 @@ from .float import FloatField
 from .sfixed32 import SFixed32Field
 from .sfixed64 import SFixed64Field
 from .string import StringField
+from .uint32 import UInt32Field
+from .uint64 import UInt64Field
