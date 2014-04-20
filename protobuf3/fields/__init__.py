@@ -1,4 +1,5 @@
 from .base import BaseField
+from .bytes import BytesField
 from .double import DoubleField
 from .fixed32 import Fixed32Field
 from .fixed64 import Fixed64Field
