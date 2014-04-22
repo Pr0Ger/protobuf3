@@ -7,7 +7,7 @@ class Int64Field(BaseField):
     WIRE_TYPE = Message.FIELD_VARINT
 
     def _convert_to_final_type(self, value):
-        if value >= 2 ** 31:
+        if value >= 2 ** 63:
             return -(2 ** 64 - value)
 
         return value
@@ -20,4 +20,3 @@ class Int64Field(BaseField):
 
     def _validate(self, value):
         return isinstance(value, int) and -2 ** 63 <= value < 2 ** 63
-
