@@ -22,9 +22,6 @@ class TestInt32Field(TestCase):
         msg.parse_from_bytes(b'\x08\xff\xff\xff\xff\x07')
         self.assertEqual(msg.a, 2 ** 31 - 1)
 
-        msg.parse_from_bytes(b'\x08\xff\xff\xff\xff\x07')
-        self.assertEqual(msg.a, 2 ** 31 - 1)
-
     def test_get_negative(self):
         msg = self.msg_cls()
 
