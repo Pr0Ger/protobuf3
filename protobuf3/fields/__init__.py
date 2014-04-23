@@ -9,6 +9,8 @@ from .int32 import Int32Field
 from .int64 import Int64Field
 from .sfixed32 import SFixed32Field
 from .sfixed64 import SFixed64Field
+from .sint32 import SInt32Field
+from .sint64 import SInt64Field
 from .string import StringField
 from .uint32 import UInt32Field
 from .uint64 import UInt64Field
