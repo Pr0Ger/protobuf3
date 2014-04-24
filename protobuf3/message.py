@@ -71,9 +71,7 @@ class Message(object):
                 return reduce(lambda a, b: a + b,
                               map(lambda a, b: a * b,
                                   result,
-                                  [(1 << 7) ** i for i in range(len(result))]
-                              )
-                )
+                                  [(1 << 7) ** i for i in range(len(result))]))
 
     @staticmethod
     def _encode_varint(number):
