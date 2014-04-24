@@ -37,6 +37,10 @@ class BaseField(object):
     def repeated(self):
         return self.__repeated
 
+    @property
+    def default_value(self):
+        return self.DEFAULT_VALUE
+
     def _convert_to_final_type(self, value):
         return value
 
@@ -52,7 +56,7 @@ class BaseField(object):
         final_values = [self._convert_to_final_type(it.value) for it in wire_values]
 
         if not final_values:
-            final_values.append(self.__class__.DEFAULT_VALUE)
+            final_values.append(self.default_value)
 
         if self.__repeated:
             self.__instance = instance  # __len__ should know it, but only __get__ receive it as parameter
