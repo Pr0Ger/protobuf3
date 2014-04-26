@@ -7,6 +7,7 @@ from .fixed64 import Fixed64Field
 from .float import FloatField
 from .int32 import Int32Field
 from .int64 import Int64Field
+from .message import MessageField
 from .sfixed32 import SFixed32Field
 from .sfixed64 import SFixed64Field
 from .sint32 import SInt32Field
