@@ -20,10 +20,7 @@ class MessageField(BaseField):
         return msg
 
     def _convert_to_wire_type(self, value):
-        if value < 0:
-            return 2 ** 64 + value
-
-        return value
+        raise ValueError
 
     def _validate(self, value):
         return False  # Direct assignment is forbidden
