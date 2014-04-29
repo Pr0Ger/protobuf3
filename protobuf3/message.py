@@ -1,18 +1,12 @@
 from collections import namedtuple
 from functools import reduce
 from protobuf3.fields.base import BaseField
+from protobuf3.wire_types import *
 
 WireField = namedtuple('WireField', ['type', 'value'])
 
 
 class Message(object):
-    FIELD_VARINT = 0
-    FIELD_FIXED64 = 1
-    FIELD_VARIABLE_LENGTH = 2
-    FIELD_START_GROUP = 3
-    FIELD_END_GROUP = 4
-    FIELD_FIXED32 = 5
-
     __fields = None
 
     def __new__(cls, *args):
@@ -35,11 +29,11 @@ class Message(object):
         field_type = number & 0b111
         field_number = number >> 3
 
-        if field_type == Message.FIELD_VARIABLE_LENGTH:
+        if field_type == FIELD_VARIABLE_LENGTH:
             field_length = Message._decode_varint(input_iterator)
-        elif field_type in (Message.FIELD_START_GROUP, Message.FIELD_END_GROUP):
+        elif field_type in (FIELD_START_GROUP, FIELD_END_GROUP):
             raise NotImplementedError("Groups is deprecated and unsupported in protobuf3")
-        elif field_type in (Message.FIELD_VARINT, Message.FIELD_FIXED64, Message.FIELD_FIXED32):
+        elif field_type in (FIELD_VARINT, FIELD_FIXED64, FIELD_FIXED32):
             field_length = None
         else:
             raise ValueError("Unknown wire type")
@@ -48,13 +42,12 @@ class Message(object):
 
     @staticmethod
     def _encode_field_signature(field_type, field_number, field_length=None):
-        if field_type not in (
-                Message.FIELD_VARINT, Message.FIELD_FIXED64, Message.FIELD_VARIABLE_LENGTH, Message.FIELD_FIXED32):
+        if field_type not in (FIELD_VARINT, FIELD_FIXED64, FIELD_VARIABLE_LENGTH, FIELD_FIXED32):
             raise ValueError("Unknown field type for serialization")
 
         result = Message._encode_varint((field_number << 3) | field_type)
 
-        if field_type == Message.FIELD_VARIABLE_LENGTH:
+        if field_type == FIELD_VARIABLE_LENGTH:
             assert field_length
 
             result += Message._encode_varint(field_length)
@@ -102,13 +95,13 @@ class Message(object):
                 if field_type != field_object.WIRE_TYPE and field_object.WIRE_TYPE != -1:
                     raise ValueError
 
-                if field_type == Message.FIELD_VARINT:
+                if field_type == FIELD_VARINT:
                     field_value = Message._decode_varint(input_iterator)
-                elif field_type == Message.FIELD_FIXED64:
+                elif field_type == FIELD_FIXED64:
                     field_value = __read_n_bytes(8)
-                elif field_type == Message.FIELD_VARIABLE_LENGTH:
+                elif field_type == FIELD_VARIABLE_LENGTH:
                     field_value = __read_n_bytes(field_length)
-                elif field_type == Message.FIELD_FIXED32:
+                elif field_type == FIELD_FIXED32:
                     field_value = __read_n_bytes(4)
                 else:
                     raise NotImplementedError
@@ -165,11 +158,11 @@ class Message(object):
                 continue
 
             for it in self.__wire_message[field_number]:
-                field_len = len(it.value) if it.type == Message.FIELD_VARIABLE_LENGTH else None
+                field_len = len(it.value) if it.type == FIELD_VARIABLE_LENGTH else None
 
                 result.append(Message._encode_field_signature(it.type, field_number, field_len))
 
-                if it.type == Message.FIELD_VARINT:
+                if it.type == FIELD_VARINT:
                     result.append(Message._encode_varint(it.value))
                 else:
                     result.append(it.value)

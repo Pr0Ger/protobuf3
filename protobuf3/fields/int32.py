@@ -1,10 +1,10 @@
 from .base import BaseField
-from protobuf3.message import Message
+from protobuf3.wire_types import FIELD_VARINT
 
 
 class Int32Field(BaseField):
     DEFAULT_VALUE = 0
-    WIRE_TYPE = Message.FIELD_VARINT
+    WIRE_TYPE = FIELD_VARINT
 
     def _convert_to_final_type(self, value):
         if value >= 2 ** 31:

@@ -1,9 +1,9 @@
 from .base import BaseField
-from protobuf3.message import Message
+from protobuf3.wire_types import FIELD_VARIABLE_LENGTH
 
 
 class MessageField(BaseField):
-    WIRE_TYPE = Message.FIELD_VARIABLE_LENGTH
+    WIRE_TYPE = FIELD_VARIABLE_LENGTH
 
     def __init__(self, message_cls=None, **kwargs):
         self.__cls = message_cls

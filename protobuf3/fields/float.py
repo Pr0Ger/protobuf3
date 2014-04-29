@@ -1,11 +1,11 @@
 from .base import BaseField
-from protobuf3.message import Message
+from protobuf3.wire_types import FIELD_FIXED32
 from struct import pack, unpack
 
 
 class FloatField(BaseField):
     DEFAULT_VALUE = 0.0
-    WIRE_TYPE = Message.FIELD_FIXED32
+    WIRE_TYPE = FIELD_FIXED32
 
     def _convert_to_final_type(self, value):
         return unpack('<f', value)[0]
