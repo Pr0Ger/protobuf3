@@ -2,6 +2,7 @@ from .base import BaseField
 from .bool import BoolField
 from .bytes import BytesField
 from .double import DoubleField
+from .enum import EnumField
 from .fixed32 import Fixed32Field
 from .fixed64 import Fixed64Field
 from .float import FloatField
