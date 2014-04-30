@@ -28,6 +28,16 @@ class TestBaseField(TestCase):
     def test_default_value_handling(self):
         self.assertEqual(self.empty_msg.a, None)
 
+    def test_custom_default_value(self):
+        class TestMsg(Message):
+            a = BaseField(field_number=1)
+            b = BaseField(field_number=2, default=5)
+
+        msg = TestMsg()
+
+        self.assertEqual(msg.a, None)
+        self.assertEqual(msg.b, 5)
+
     def test_get_repeated_field(self):
         self.assertEqual(type(self.repeated_msg.a), StringField)
 

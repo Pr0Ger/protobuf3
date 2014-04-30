@@ -2,7 +2,7 @@ class BaseField(object):
     DEFAULT_VALUE = None
     WIRE_TYPE = -1
 
-    def __init__(self, field_number=None, required=False, optional=False, repeated=False):
+    def __init__(self, field_number=None, required=False, optional=False, repeated=False, default=None):
         assert isinstance(field_number, int)
 
         self.__field_name = "undefined"
@@ -10,6 +10,7 @@ class BaseField(object):
         self.__required = required
         self.__optional = optional
         self.__repeated = repeated
+        self.__default = default
 
         self.__instance = None  # Some kind of dirty hack for list access methods, will be assigned in __get__
 
@@ -39,6 +40,8 @@ class BaseField(object):
 
     @property
     def default_value(self):
+        if self.__default:
+            return self.__default
         return self.DEFAULT_VALUE
 
     def _convert_to_final_type(self, value):
