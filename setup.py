@@ -7,6 +7,6 @@ setup(
     url='',
     license='MIT',
     author='Pr0Ger',
-    author_email='me@pr0ger.prg',
+    author_email='me@pr0ger.org',
     description=''
 )
