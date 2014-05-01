@@ -168,3 +168,14 @@ class TestMessage(TestCase):
 
         self.assertEqual(msg.encode_to_bytes(), original_msg)
         self.assertEqual(msg.encode_to_bytes(True), b'\x12\x07\x74\x65\x73\x74\x69\x6E\x67')
+
+    def test_add_field(self):
+        class TestMsg(Message):
+            pass
+        TestMsg.add_field('a', StringField(field_number=2, optional=True))
+
+        msg = TestMsg()
+        msg.parse_from_bytes(b'\x12\x07\x74\x65\x73\x74\x69\x6E\x67')
+
+        self.assertTrue(hasattr(msg, 'a'))
+        self.assertEqual(msg.a, 'testing')

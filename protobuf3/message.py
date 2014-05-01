@@ -9,15 +9,29 @@ WireField = namedtuple('WireField', ['type', 'value'])
 class Message(object):
     __fields = None
 
+    @classmethod
+    def __load_django_style_fields(cls):
+        cls.__fields = {}
+        for (field_name, field_object) in cls.__dict__.items():
+            if isinstance(field_object, BaseField):
+                cls.__fields[field_object.field_number] = field_object
+                field_object.field_name = field_name
+
     def __new__(cls, *args):
         if not cls.__fields:
-            cls.__fields = {}
-            for (field_name, field_object) in cls.__dict__.items():
-                if isinstance(field_object, BaseField):
-                    cls.__fields[field_object.field_number] = field_object
-                    field_object.field_name = field_name
+            cls.__load_django_style_fields()
 
         return super().__new__(cls, *args)
+
+    @classmethod
+    def add_field(cls, field_name, field_instance):
+        if not cls.__fields:
+            cls.__load_django_style_fields()
+
+        cls.__fields[field_instance.field_number] = field_instance
+        field_instance.field_name = field_name
+
+        setattr(cls, field_name, field_instance)
 
     def __init__(self):
         self.__wire_message = {}
