@@ -17,11 +17,11 @@ class Message(object):
                 cls.__fields[field_object.field_number] = field_object
                 field_object.field_name = field_name
 
-    def __new__(cls, *args):
+    def __new__(cls, *args, **kwargs):
         if not cls.__fields:
             cls.__load_django_style_fields()
 
-        return super().__new__(cls, *args)
+        return super().__new__(cls)
 
     @classmethod
     def add_field(cls, field_name, field_instance):
@@ -33,8 +33,9 @@ class Message(object):
 
         setattr(cls, field_name, field_instance)
 
-    def __init__(self):
+    def __init__(self, parent_msg=None):
         self.__wire_message = {}
+        self.__parent = parent_msg
 
     @staticmethod
     def _decode_field_signature(input_iterator):
@@ -154,6 +155,10 @@ class Message(object):
             self.__wire_message[field_number][index] = WireField(type=field_type, value=field_value)
         else:
             self.__wire_message[field_number] = [WireField(type=field_type, value=field_value)]
+
+        if self.__parent:
+            msg, number = self.__parent
+            msg._set_wire_values(number, FIELD_VARIABLE_LENGTH, self.encode_to_bytes())
 
     def parse_from_bytes(self, bytes_array):
         self.__wire_message = {}

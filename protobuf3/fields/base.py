@@ -12,7 +12,7 @@ class BaseField(object):
         self.__repeated = repeated
         self.__default = default
 
-        self.__instance = None  # Some kind of dirty hack for list access methods, will be assigned in __get__
+        self._instance = None  # Some kind of dirty hack for list access methods, will be assigned in __get__
 
     @property
     def field_name(self):
@@ -54,6 +54,8 @@ class BaseField(object):
         return True
 
     def __get__(self, instance, owner):
+        self._instance = instance  # some functions should know it, but only __get__ receive it as parameter
+
         wire_values = instance._get_wire_values(self.__field_number)
 
         final_values = [self._convert_to_final_type(it.value) for it in wire_values]
@@ -62,7 +64,6 @@ class BaseField(object):
             final_values.append(self.default_value)
 
         if self.__repeated:
-            self.__instance = instance  # __len__ should know it, but only __get__ receive it as parameter
             return self
         else:
             final_values = final_values[0]
@@ -74,7 +75,7 @@ class BaseField(object):
         if isinstance(item, slice):
             raise NotImplementedError
 
-        wire_value = self.__instance._get_wire_values(self.__field_number)[item]
+        wire_value = self._instance._get_wire_values(self.__field_number)[item]
 
         return self._convert_to_final_type(wire_value.value)
 
@@ -82,7 +83,7 @@ class BaseField(object):
         if not self._validate(value):
             raise ValueError
 
-        self.__instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value), key)
+        self._instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value), key)
 
     def __set__(self, instance, value):
         if not self._validate(value):
@@ -91,21 +92,21 @@ class BaseField(object):
         instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value))
 
     def __len__(self):
-        assert self.__instance
+        assert self._instance
 
         if self.__repeated:
-            return len(self.__instance._get_wire_values(self.__field_number))
+            return len(self._instance._get_wire_values(self.__field_number))
         else:
             raise TypeError("Using len() isn't allowed for not repeated fields")
 
     def append(self, value):
-        assert self.__instance
+        assert self._instance
 
-        self.__instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value),
+        self._instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value),
                                          append=True)
 
     def insert(self, index, value):
-        assert self.__instance
+        assert self._instance
 
-        self.__instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value),
+        self._instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value),
                                          index=index, insert=True)
