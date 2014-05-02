@@ -193,3 +193,14 @@ class CodeGeneratorRequest(Message):
     file_to_generate = StringField(field_number=1, repeated=True)
     parameter = StringField(field_number=2, optional=True)
     proto_file = MessageField(field_number=15, repeated=True, message_cls=FileDescriptorProto)
+
+
+class CodeGeneratorResponse(Message):
+    error = StringField(field_number=1, optional=True)
+
+    class File(Message):
+        name = StringField(field_number=1, optional=True)
+        insertion_point = StringField(field_number=2, optional=True)
+        content = StringField(field_number=15, optional=True)
+
+    file = MessageField(field_number=15, repeated=True, message_cls=File)
