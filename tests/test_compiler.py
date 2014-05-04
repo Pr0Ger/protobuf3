@@ -15,6 +15,10 @@ class TestCompiler(TestCase):
 
         new_env = environ.copy()
         new_env['PATH'] += ':' + path.normpath(path.join(path.dirname(__file__), '..', 'bin'))
+        if 'PYTHONPATH' in new_env:
+            new_env['PYTHONPATH'] += ':' + path.normpath(path.join(path.dirname(__file__), '..'))
+        else:
+            new_env['PYTHONPATH'] = path.normpath(path.join(path.dirname(__file__), '..'))
 
         args = [
             'protoc',
