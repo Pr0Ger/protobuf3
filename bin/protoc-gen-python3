@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+
+import sys
+from protobuf3.compiler.plugin_api import CodeGeneratorResponse, CodeGeneratorRequest
+from protobuf3.compiler import Compiler
+
+data = sys.stdin.buffer.read()
+
+msg = CodeGeneratorRequest()
+msg.parse_from_bytes(data)
+
+response = CodeGeneratorResponse()
+
+for fdesc in msg.proto_file:
+    if fdesc.name in msg.file_to_generate:
+        compiler = Compiler(fdesc)
+
+        file = CodeGeneratorResponse.File()
+        file.name = compiler.return_file_name()
+        file.content = compiler.return_file_contents()
+
+        response.file.append(file)
+
+sys.stdout.buffer.write(response.encode_to_bytes())
