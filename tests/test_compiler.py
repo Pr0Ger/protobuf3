@@ -44,10 +44,12 @@ class TestCompiler(TestCase):
         msg_code = '''
         message TestMsg {
             optional bool a = 1;
+            optional string b = 2;
         }'''
 
         msgs = self.run_protoc_compiler(msg_code)
 
         msg = msgs.TestMsg()
-        msg.parse_from_bytes(b'\x08\x01')
+        msg.parse_from_bytes(b'\x08\x01\x12\x07\x74\x65\x73\x74\x69\x6E\x67')
         self.assertEqual(msg.a, True)
+        self.assertEqual(msg.b, 'testing')
