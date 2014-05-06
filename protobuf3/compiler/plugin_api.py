@@ -118,7 +118,6 @@ class DescriptorProto(Message):
     field = MessageField(field_number=2, repeated=True, message_cls=FieldDescriptorProto)
     extension = MessageField(field_number=6, repeated=True, message_cls=FieldDescriptorProto)
 
-    # nested_type = MessageField(field_number=3, repeated=True, message_cls=DescriptorProto) ???
     enum_type = MessageField(field_number=4, repeated=True, message_cls=EnumDescriptorProto)
 
     class ExtensionRange(Message):
@@ -128,6 +127,8 @@ class DescriptorProto(Message):
     extension_range = MessageField(field_number=5, repeated=True, message_cls=ExtensionRange)
 
     options = MessageField(field_number=7, optional=True, message_cls=MessageOptions)
+
+DescriptorProto.add_field('nested_type', MessageField(field_number=3, repeated=True, message_cls=DescriptorProto))
 
 
 class MethodDescriptorProto(Message):

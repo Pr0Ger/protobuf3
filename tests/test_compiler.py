@@ -55,3 +55,41 @@ class TestCompiler(TestCase):
         msg.parse_from_bytes(b'\x08\x01\x12\x07\x74\x65\x73\x74\x69\x6E\x67')
         self.assertEqual(msg.a, True)
         self.assertEqual(msg.b, 'testing')
+
+    def test_embedded_messages(self):
+        msg_code = '''
+        message TestA {
+            message Foo {
+                optional int32 a = 1;
+            }
+
+            optional Foo b = 3;
+        }
+
+        message Bar {
+            optional int32 a = 1;
+        }
+
+        message TestB {
+            optional Bar b = 3;
+        }
+
+        message TestC {
+            optional TestA.Foo b = 3;
+        }'''
+
+        msgs = self.run_protoc_compiler(msg_code)
+
+        self.assertEqual(type(msgs.TestA.Foo), type)
+
+        msgA = msgs.TestA()
+        msgA.parse_from_bytes(b'\x1a\x03\x08\x96\x01')
+        self.assertEqual(msgA.b.a, 150)
+
+        msgB = msgs.TestB()
+        msgB.parse_from_bytes(b'\x1a\x03\x08\x96\x01')
+        self.assertEqual(msgB.b.a, 150)
+
+        msgC = msgs.TestC()
+        msgC.parse_from_bytes(b'\x1a\x03\x08\x96\x01')
+        self.assertEqual(msgC.b.a, 150)

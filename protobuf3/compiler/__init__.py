@@ -20,7 +20,7 @@ field_types = {
     FieldDescriptorProto.Type.TYPE_FLOAT: 'FloatField',
     FieldDescriptorProto.Type.TYPE_INT32: 'Int32Field',
     FieldDescriptorProto.Type.TYPE_INT64: 'Int64Field',
-    # FieldDescriptorProto.Type.TYPE_MESSAGE: 'MessageField',
+    FieldDescriptorProto.Type.TYPE_MESSAGE: 'MessageField',
     FieldDescriptorProto.Type.TYPE_SFIXED32: 'SFixed32Field',
     FieldDescriptorProto.Type.TYPE_SFIXED64: 'SFixed64Field',
     FieldDescriptorProto.Type.TYPE_SINT32: 'SInt32Field',
@@ -58,25 +58,39 @@ class Compiler(object):
 
         return '\n'.join(map(lambda x: '\n'.join(x), (imports, self.__messages_code, self.__fields_code)))
 
-    def process_message(self, message):
-        self.__messages_code.extend([
-            "",
-            "",
-            "class {}(Message):".format(message.name),
-            "    pass"
-        ])
+    def process_message(self, message, embedded=''):
+        _empty = True
+
+        indent = embedded.count('.') * '    '
+
+        self.__messages_code.append('')
+        if not embedded:
+            # Two blank lines between top-level definitions
+            self.__messages_code.append('')
+
+        self.__messages_code.append(indent + "class {}(Message):".format(message.name))
+
+        for msg in message.nested_type:
+            _empty = False
+            self.process_message(msg, embedded + message.name + '.')
+
+        if _empty:
+            self.__messages_code.append(indent + '    pass')
 
         for field in message.field:
-            self.process_field(message.name, field)
+            self.process_field(message.name, field, embedded)
 
-    def process_field(self, msg_name, field):
+    def process_field(self, msg_name, field, embedded=''):
         field_args = [
             "field_number=" + str(field.number),
             field_labels[field.label]
         ]
 
+        if field.type == FieldDescriptorProto.Type.TYPE_MESSAGE:
+            field_args.append("message_cls=" + field.type_name[1:])
+
         field = {
-            'msg': msg_name,
+            'msg': embedded + msg_name,
             'field_name': field.name,
             'field_type': field_types[field.type],
             'field_args': ', '.join(field_args),
