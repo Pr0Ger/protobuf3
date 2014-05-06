@@ -29,6 +29,8 @@ class TestCompiler(TestCase):
         proc = Popen(args, stdout=PIPE, stderr=PIPE, env=new_env)
         proc.wait()
 
+        assert proc.returncode == 0
+
         filename, ext = path.splitext(path.basename(self.proto_file.name))
         generated_file = path.join(self.out_dir.name, filename + '.py')
 
