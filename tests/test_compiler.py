@@ -1,3 +1,4 @@
+from enum import Enum
 from importlib.machinery import SourceFileLoader
 from os import environ, path
 from subprocess import Popen, PIPE
@@ -93,3 +94,36 @@ class TestCompiler(TestCase):
         msgC = msgs.TestC()
         msgC.parse_from_bytes(b'\x1a\x03\x08\x96\x01')
         self.assertEqual(msgC.b.a, 150)
+
+    def test_enums(self):
+        msg_code = '''
+        message TestA {
+            enum Foo {
+                Opt1 = 1;
+                Opt2 = 2;
+                Opt3 = 3;
+            }
+            optional Foo a = 1;
+        }
+
+        enum Bar {
+            Opt1 = 1;
+            Opt2 = 2;
+        }
+
+        message TestB {
+            optional Bar a = 1;
+        }'''
+
+        msgs = self.run_protoc_compiler(msg_code)
+
+        self.assertTrue(isinstance(msgs.TestA.Foo, type))
+        self.assertTrue(issubclass(msgs.TestA.Foo, Enum))
+
+        msg_a = msgs.TestA()
+        msg_a.parse_from_bytes(b'\x08\x02')
+        self.assertEqual(msg_a.a, msgs.TestA.Foo.Opt2)
+
+        msg_b = msgs.TestB()
+        msg_b.parse_from_bytes(b'\x08\x02')
+        self.assertEqual(msg_b.a, msgs.Bar.Opt2)

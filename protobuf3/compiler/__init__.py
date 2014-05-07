@@ -14,7 +14,7 @@ field_types = {
     FieldDescriptorProto.Type.TYPE_BOOL: 'BoolField',
     FieldDescriptorProto.Type.TYPE_BYTES: 'BytesField',
     FieldDescriptorProto.Type.TYPE_DOUBLE: 'DoubleField',
-    # FieldDescriptorProto.Type.TYPE_ENUM: 'EnumField',
+    FieldDescriptorProto.Type.TYPE_ENUM: 'EnumField',
     FieldDescriptorProto.Type.TYPE_FIXED32: 'Fixed32Field',
     FieldDescriptorProto.Type.TYPE_FIXED64: 'Fixed64Field',
     FieldDescriptorProto.Type.TYPE_FLOAT: 'FloatField',
@@ -45,6 +45,9 @@ class Compiler(object):
         for message in fdesc.message_type:
             self.process_message(message)
 
+        for enum in fdesc.enum_type:
+            self.process_enum(enum)
+
     def return_file_name(self):
         return splitext(self.__fdesc.name)[0] + '.py'
 
@@ -70,6 +73,10 @@ class Compiler(object):
 
         self.__messages_code.append(indent + "class {}(Message):".format(message.name))
 
+        for enum in message.enum_type:
+            _empty = False
+            self.process_enum(enum, embedded + message.name + '.')
+
         for msg in message.nested_type:
             _empty = False
             self.process_message(msg, embedded + message.name + '.')
@@ -80,6 +87,24 @@ class Compiler(object):
         for field in message.field:
             self.process_field(message.name, field, embedded)
 
+    def process_enum(self, enum, embedded=''):
+        if 'enum' not in self.__imports:
+            self.__imports['enum'] = {'Enum'}
+        else:
+            self.__imports['enum'].add('Enum')
+
+        indent = embedded.count('.') * '    '
+
+        self.__messages_code.append('')
+        if not embedded:
+            # Two blank lines between top-level definitions
+            self.__messages_code.append('')
+
+        self.__messages_code.append(indent + "class {}(Enum):".format(enum.name))
+
+        for option in enum.value:
+            self.__messages_code.append(indent + "    {} = {}".format(option.name, option.number))
+
     def process_field(self, msg_name, field, embedded=''):
         field_args = [
             "field_number=" + str(field.number),
@@ -88,6 +113,9 @@ class Compiler(object):
 
         if field.type == FieldDescriptorProto.Type.TYPE_MESSAGE:
             field_args.append("message_cls=" + field.type_name[1:])
+
+        if field.type == FieldDescriptorProto.Type.TYPE_ENUM:
+            field_args.append("enum_cls=" + field.type_name[1:])
 
         field = {
             'msg': embedded + msg_name,
