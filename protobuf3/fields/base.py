@@ -10,6 +10,9 @@ class BaseField(object):
         self.__required = required
         self.__optional = optional
         self.__repeated = repeated
+
+        if (default is not None) and (not self._validate(default)):
+            raise ValueError
         self.__default = default
 
         self._instance = None  # Some kind of dirty hack for list access methods, will be assigned in __get__

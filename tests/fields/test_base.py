@@ -38,6 +38,9 @@ class TestBaseField(TestCase):
         self.assertEqual(msg.a, None)
         self.assertEqual(msg.b, 5)
 
+    def test_invalid_custom_default_value(self):
+        self.assertRaises(ValueError, StringField, field_number=1, default=0)
+
     def test_get_repeated_field(self):
         self.assertEqual(type(self.repeated_msg.a), StringField)
 
