@@ -134,9 +134,6 @@ class Compiler(object):
             else:
                 default = field.default_value
 
-            import sys
-            print(default, file=sys.stderr)
-
             field_args.append("default=" + default)
 
         field = {
