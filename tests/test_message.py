@@ -179,3 +179,16 @@ class TestMessage(TestCase):
 
         self.assertTrue(hasattr(msg, 'a'))
         self.assertEqual(msg.a, 'testing')
+
+    def test_contains(self):
+        class TestMsg(Message):
+            a = StringField(field_number=2, optional=True)
+
+        msg = TestMsg()
+
+        self.assertEqual('b' in msg, False)
+
+        self.assertEqual('a' in msg, False)
+
+        msg.parse_from_bytes(b'\x12\x07\x74\x65\x73\x74\x69\x6E\x67')
+        self.assertEqual('a' in msg, True)

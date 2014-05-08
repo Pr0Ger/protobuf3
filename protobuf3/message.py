@@ -187,3 +187,11 @@ class Message(object):
                     result.append(it.value)
 
         return b''.join(result)
+
+    def __contains__(self, item):
+        field = self.__class__.__dict__.get(item)
+
+        if field is None:
+            return False
+
+        return field.field_number in self.__wire_message
