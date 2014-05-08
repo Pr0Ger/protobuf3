@@ -15,6 +15,10 @@ class EnumField(BaseField):
 
     @property
     def default_value(self):
+        old_value = super().default_value
+        if old_value:
+            return old_value
+
         return next(iter(self.__cls))  # Hack to get first element from enum
 
     def _convert_to_final_type(self, value):
