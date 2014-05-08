@@ -153,3 +153,9 @@ class TestCompiler(TestCase):
         self.assertEqual(msg_a.d, msgs.Foo.Opt2)
         self.assertEqual(msg_a.e, 1)
 
+    def test_message_without_fields(self):
+        msg_code = '''
+        message Foo {
+        }'''
+
+        self.run_protoc_compiler(msg_code)

@@ -55,7 +55,8 @@ class Compiler(object):
         imports = []
 
         for it in self.__imports:
-            imports.append("from {} import {}".format(it, ', '.join(self.__imports[it])))
+            if self.__imports[it]:
+                imports.append("from {} import {}".format(it, ', '.join(self.__imports[it])))
 
         self.__fields_code.append('')
 
