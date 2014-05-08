@@ -1,7 +1,7 @@
 from enum import Enum
 from importlib.machinery import SourceFileLoader
 from os import environ, path
-from subprocess import Popen, PIPE
+from subprocess import Popen
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 from unittest import TestCase
 
@@ -27,7 +27,7 @@ class TestCompiler(TestCase):
             '--proto_path=' + path.dirname(self.proto_file.name),
             self.proto_file.name
         ]
-        proc = Popen(args, stdout=PIPE, stderr=PIPE, env=new_env)
+        proc = Popen(args, env=new_env)
         proc.wait()
 
         assert proc.returncode == 0
