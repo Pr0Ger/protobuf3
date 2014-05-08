@@ -117,6 +117,23 @@ class Compiler(object):
         if field.type == FieldDescriptorProto.Type.TYPE_ENUM:
             field_args.append("enum_cls=" + field.type_name[1:])
 
+        if 'default_value' in field:
+            if field.type == FieldDescriptorProto.Type.TYPE_BOOL:
+                default = field.default_value.title()
+            elif field.type == FieldDescriptorProto.Type.TYPE_STRING:
+                default = '"' + field.default_value + '"'
+            elif field.type == FieldDescriptorProto.Type.TYPE_BYTES:
+                default = "b'" + field.default_value + "'"
+            elif field.type == FieldDescriptorProto.Type.TYPE_ENUM:
+                default = field.type_name[1:] + '.' + field.default_value
+            else:
+                default = field.default_value
+
+            import sys
+            print(default, file=sys.stderr)
+
+            field_args.append("default=" + default)
+
         field = {
             'msg': embedded + msg_name,
             'field_name': field.name,

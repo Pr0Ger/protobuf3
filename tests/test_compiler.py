@@ -127,3 +127,29 @@ class TestCompiler(TestCase):
         msg_b = msgs.TestB()
         msg_b.parse_from_bytes(b'\x08\x02')
         self.assertEqual(msg_b.a, msgs.Bar.Opt2)
+
+    def test_default_option(self):
+        msg_code = '''
+        enum Foo {
+            Opt1 = 1;
+            Opt2 = 2;
+        }
+
+        message TestA {
+            optional bool a = 1 [default = true];
+            optional string b = 2 [default = 'asd'];
+            optional bytes c = 3 [default = 'q\x08e'];
+            optional Foo d = 4 [default = Opt2];
+            optional int32 e = 5 [default = 1];
+        }'''
+
+        msgs = self.run_protoc_compiler(msg_code)
+
+        msg_a = msgs.TestA()
+
+        self.assertEqual(msg_a.a, True)
+        self.assertEqual(msg_a.b, 'asd')
+        self.assertEqual(msg_a.c, b'q\x08e')
+        self.assertEqual(msg_a.d, msgs.Foo.Opt2)
+        self.assertEqual(msg_a.e, 1)
+
