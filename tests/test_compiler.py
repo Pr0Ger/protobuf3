@@ -159,3 +159,36 @@ class TestCompiler(TestCase):
         }'''
 
         self.run_protoc_compiler(msg_code)
+
+    def test_enum_alias(self):
+        msg_code = '''
+        enum EnumAllowingAlias {
+            option allow_alias = true;
+            UNKNOWN = 0;
+            STARTED = 1;
+            RUNNING = 1;
+        }'''
+
+        # Compile without warnings
+        self.run_protoc_compiler(msg_code)
+
+        msg_code = '''
+        enum EnumNotAllowingAlias {
+            UNKNOWN = 0;
+            STARTED = 1;
+            RUNNING = 1;
+        }'''
+
+        # Protoc will return warning, but compile this code
+        self.run_protoc_compiler(msg_code)
+
+        msg_code = '''
+        enum EnumForciblyNotAllowingAlias {
+            option allow_alias = false;
+            UNKNOWN = 0;
+            STARTED = 1;
+            RUNNING = 1;
+        }'''
+
+        # Protoc will crash with non-zero return code
+        self.assertRaises(AssertionError, self.run_protoc_compiler, msg_code)

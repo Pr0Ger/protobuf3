@@ -101,6 +101,10 @@ class Compiler(object):
             # Two blank lines between top-level definitions
             self.__messages_code.append('')
 
+        if not enum.options.allow_alias:
+            self.__imports['enum'].add('unique')
+            self.__messages_code.append(indent + "@unique")
+
         self.__messages_code.append(indent + "class {}(Enum):".format(enum.name))
 
         for option in enum.value:
