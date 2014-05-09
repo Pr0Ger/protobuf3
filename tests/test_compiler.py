@@ -1,7 +1,7 @@
 from enum import Enum
 from importlib.machinery import SourceFileLoader
 from os import environ, path
-from subprocess import Popen
+from subprocess import Popen, PIPE
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 from unittest import TestCase
 
@@ -27,10 +27,16 @@ class TestCompiler(TestCase):
             '--proto_path=' + path.dirname(self.proto_file.name),
             self.proto_file.name
         ]
-        proc = Popen(args, env=new_env)
+        proc = Popen(args, stderr=PIPE, env=new_env)
         proc.wait()
 
-        assert proc.returncode == 0
+        if proc.returncode:
+            value = proc.stderr.readline()
+            while value:
+                print(value)
+                value = proc.stderr.readline()
+
+            raise ValueError
 
         filename, ext = path.splitext(path.basename(self.proto_file.name))
         generated_file = path.join(self.out_dir.name, filename + '.py')
@@ -191,7 +197,7 @@ class TestCompiler(TestCase):
         }'''
 
         # Protoc will crash with non-zero return code
-        self.assertRaises(AssertionError, self.run_protoc_compiler, msg_code)
+        self.assertRaises(ValueError, self.run_protoc_compiler, msg_code)
 
     def test_extend_message(self):
         msg_code = '''
