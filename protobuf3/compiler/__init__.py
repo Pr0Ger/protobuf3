@@ -48,6 +48,9 @@ class Compiler(object):
         for enum in fdesc.enum_type:
             self.process_enum(enum)
 
+        for ext in fdesc.extension:
+            self.process_field(ext.extendee[1:], ext)
+
     def return_file_name(self):
         return splitext(self.__fdesc.name)[0] + '.py'
 
@@ -77,6 +80,9 @@ class Compiler(object):
         for enum in message.enum_type:
             _empty = False
             self.process_enum(enum, embedded + message.name + '.')
+
+        for ext in message.extension:
+            self.process_field(ext.extendee[1:], ext)
 
         for msg in message.nested_type:
             _empty = False

@@ -192,3 +192,42 @@ class TestCompiler(TestCase):
 
         # Protoc will crash with non-zero return code
         self.assertRaises(AssertionError, self.run_protoc_compiler, msg_code)
+
+    def test_extend_message(self):
+        msg_code = '''
+        message Foo {
+            message Bar {
+                extensions 100 to 199;
+            }
+
+            extend Foo {
+                optional int32 test = 104;
+            }
+
+            extensions 100 to 199;
+        }
+
+        extend Foo {
+            optional int32 foo = 101;
+        }
+
+        extend Foo.Bar {
+            optional int32 bar = 102;
+        }'''
+
+        msgs = self.run_protoc_compiler(msg_code)
+
+        msg_foo = msgs.Foo()
+        msg_foo.parse_from_bytes(b'\xa8\x06{\xc0\x06\x95\x06')
+
+        self.assertTrue(hasattr(msg_foo, 'foo'))
+        self.assertEqual(msg_foo.foo, 123)
+
+        self.assertTrue(hasattr(msg_foo, 'test'))
+        self.assertEqual(msg_foo.test, 789)
+
+
+        msg_bar = msgs.Foo.Bar()
+        msg_bar.parse_from_bytes(b'\xb0\x06\xc8\x03')
+        self.assertTrue(hasattr(msg_bar, 'bar'))
+        self.assertEqual(msg_bar.bar, 456)
