@@ -2,17 +2,25 @@ from enum import Enum
 from importlib.machinery import SourceFileLoader
 from os import environ, path
 from subprocess import Popen, PIPE
-from tempfile import NamedTemporaryFile, TemporaryDirectory
+from tempfile import TemporaryDirectory
+from types import ModuleType
 from unittest import TestCase
 
 
 class TestCompiler(TestCase):
-    def run_protoc_compiler(self, proto_code):
-        self.proto_file = NamedTemporaryFile(suffix='.proto')
+    def setUp(self):
+        self.proto_dir = TemporaryDirectory()
         self.out_dir = TemporaryDirectory()
 
-        self.proto_file.write(proto_code.encode())
-        self.proto_file.flush()
+    def add_proto_file(self, content, name='test.proto'):
+        with open(path.join(self.proto_dir.name, name), 'w') as proto_file:
+            proto_file.write(content)
+
+    def run_compiler(self, files='test.proto'):
+        if not isinstance(files, list):
+            files = [files]
+
+        files = map(lambda name: path.join(self.proto_dir.name, name), files)
 
         new_env = environ.copy()
         new_env['PATH'] += ':' + path.normpath(path.join(path.dirname(__file__), '..', 'bin'))
@@ -24,9 +32,10 @@ class TestCompiler(TestCase):
         args = [
             'protoc',
             '--python3_out=' + self.out_dir.name,
-            '--proto_path=' + path.dirname(self.proto_file.name),
-            self.proto_file.name
+            '--proto_path=' + self.proto_dir.name,
         ]
+        args.extend(files)
+
         proc = Popen(args, stderr=PIPE, env=new_env)
         proc.wait()
 
@@ -38,16 +47,11 @@ class TestCompiler(TestCase):
 
             raise ValueError
 
-        filename, ext = path.splitext(path.basename(self.proto_file.name))
-        generated_file = path.join(self.out_dir.name, filename + '.py')
+    def return_module(self, name='test'):
+        file_name = path.join(self.out_dir.name, name + '.py')
 
-        loader = SourceFileLoader("generated_files", generated_file)
-        foo = loader.load_module("generated_files")
-
-        self.proto_file.close()
-        self.out_dir.cleanup()
-
-        return foo
+        loader = SourceFileLoader("generated_file", file_name)
+        return loader.load_module("generated_file")
 
     def test_simple_fields(self):
         msg_code = '''
@@ -56,7 +60,9 @@ class TestCompiler(TestCase):
             optional string b = 2;
         }'''
 
-        msgs = self.run_protoc_compiler(msg_code)
+        self.add_proto_file(msg_code)
+        self.run_compiler()
+        msgs = self.return_module()
 
         msg = msgs.TestMsg()
         msg.parse_from_bytes(b'\x08\x01\x12\x07\x74\x65\x73\x74\x69\x6E\x67')
@@ -85,7 +91,9 @@ class TestCompiler(TestCase):
             optional TestA.Foo b = 3;
         }'''
 
-        msgs = self.run_protoc_compiler(msg_code)
+        self.add_proto_file(msg_code)
+        self.run_compiler()
+        msgs = self.return_module()
 
         self.assertEqual(type(msgs.TestA.Foo), type)
 
@@ -121,7 +129,9 @@ class TestCompiler(TestCase):
             optional Bar a = 1;
         }'''
 
-        msgs = self.run_protoc_compiler(msg_code)
+        self.add_proto_file(msg_code)
+        self.run_compiler()
+        msgs = self.return_module()
 
         self.assertTrue(isinstance(msgs.TestA.Foo, type))
         self.assertTrue(issubclass(msgs.TestA.Foo, Enum))
@@ -149,7 +159,9 @@ class TestCompiler(TestCase):
             optional int32 e = 5 [default = 1];
         }'''
 
-        msgs = self.run_protoc_compiler(msg_code)
+        self.add_proto_file(msg_code)
+        self.run_compiler()
+        msgs = self.return_module()
 
         msg_a = msgs.TestA()
 
@@ -164,7 +176,10 @@ class TestCompiler(TestCase):
         message Foo {
         }'''
 
-        self.run_protoc_compiler(msg_code)
+        self.add_proto_file(msg_code)
+        self.run_compiler()
+
+        self.assertEqual(type(self.return_module()), ModuleType)
 
     def test_enum_alias(self):
         msg_code = '''
@@ -176,7 +191,9 @@ class TestCompiler(TestCase):
         }'''
 
         # Compile without warnings
-        self.run_protoc_compiler(msg_code)
+        self.add_proto_file(msg_code)
+        self.run_compiler()
+        self.assertEqual(type(self.return_module()), ModuleType)
 
         msg_code = '''
         enum EnumNotAllowingAlias {
@@ -186,7 +203,9 @@ class TestCompiler(TestCase):
         }'''
 
         # Protoc will return warning, but compile this code
-        self.run_protoc_compiler(msg_code)
+        self.add_proto_file(msg_code)
+        self.run_compiler()
+        self.assertEqual(type(self.return_module()), ModuleType)
 
         msg_code = '''
         enum EnumForciblyNotAllowingAlias {
@@ -197,7 +216,8 @@ class TestCompiler(TestCase):
         }'''
 
         # Protoc will crash with non-zero return code
-        self.assertRaises(ValueError, self.run_protoc_compiler, msg_code)
+        self.add_proto_file(msg_code)
+        self.assertRaises(ValueError, self.run_compiler)
 
     def test_extend_message(self):
         msg_code = '''
@@ -221,7 +241,9 @@ class TestCompiler(TestCase):
             optional int32 bar = 102;
         }'''
 
-        msgs = self.run_protoc_compiler(msg_code)
+        self.add_proto_file(msg_code)
+        self.run_compiler()
+        msgs = self.return_module()
 
         msg_foo = msgs.Foo()
         msg_foo.parse_from_bytes(b'\xa8\x06{\xc0\x06\x95\x06')
