@@ -50,8 +50,8 @@ class TestCompiler(TestCase):
     def return_module(self, name='test'):
         file_name = path.join(self.out_dir.name, name + '.py')
 
-        loader = SourceFileLoader("generated_file", file_name)
-        return loader.load_module("generated_file")
+        loader = SourceFileLoader(self._testMethodName, file_name)
+        return loader.load_module(self._testMethodName)
 
     def test_simple_fields(self):
         msg_code = '''
