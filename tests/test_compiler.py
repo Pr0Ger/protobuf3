@@ -259,3 +259,29 @@ class TestCompiler(TestCase):
         msg_bar.parse_from_bytes(b'\xb0\x06\xc8\x03')
         self.assertTrue(hasattr(msg_bar, 'bar'))
         self.assertEqual(msg_bar.bar, 456)
+
+    def test_import(self):
+        foo_code = '''
+        message Foo {
+            optional int32 a = 1;
+        }'''
+
+        bar_code = '''
+        import "foo.proto";
+
+        message Bar {
+            optional Foo b = 3;
+        }'''
+
+        self.add_proto_file(foo_code, 'foo.proto')
+        self.add_proto_file(bar_code, 'bar.proto')
+
+        self.run_compiler('bar.proto')
+
+        bar = self.return_module('bar')
+
+        msg = bar.Bar()
+        self.assertEqual(type(msg.b), bar.Foo)
+
+        msg.parse_from_bytes(b'\x1a\x03\x08\x96\x01')
+        self.assertEqual(msg.b, 150)
