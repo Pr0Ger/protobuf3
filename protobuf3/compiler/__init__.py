@@ -145,7 +145,7 @@ class Compiler(object):
             import sys
             print(top_level_name, self.__top_level_elements, self.__tle_map, file=sys.stderr)
             if top_level_name not in self.__top_level_elements:
-                file_to_import = splitext(self.__tle_map[top_level_name])[0]
+                file_to_import = splitext(self.__tle_map[top_level_name])[0].replace('/', '.')
                 if file_to_import not in self.__imports:
                     self.__imports[file_to_import] = {top_level_name}
                 else:

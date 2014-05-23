@@ -1,6 +1,6 @@
 from enum import Enum
 from importlib.machinery import SourceFileLoader
-from os import environ, path
+from os import environ, makedirs, path
 from subprocess import Popen, PIPE
 from sys import path as sys_path
 from tempfile import TemporaryDirectory
@@ -14,7 +14,13 @@ class TestCompiler(TestCase):
         self.out_dir = TemporaryDirectory()
 
     def add_proto_file(self, content, name='test.proto'):
-        with open(path.join(self.proto_dir.name, name), 'w') as proto_file:
+        file_name = path.join(self.proto_dir.name, name)
+        dir_name = path.dirname(file_name)
+
+        if not path.exists(dir_name):
+            makedirs(dir_name, exist_ok=True)
+
+        with open(file_name, 'w') as proto_file:
             proto_file.write(content)
 
     def run_compiler(self, files='test.proto'):
@@ -279,6 +285,32 @@ class TestCompiler(TestCase):
         }'''
 
         self.add_proto_file(foo_code, 'foo.proto')
+        self.add_proto_file(bar_code, 'bar.proto')
+
+        self.run_compiler('bar.proto')
+
+        bar = self.return_module('bar')
+
+        msg = bar.Bar()
+        self.assertEqual(type(msg.b), bar.Foo)
+
+        msg.parse_from_bytes(b'\x1a\x03\x08\x96\x01')
+        self.assertEqual(msg.b.a, 150)
+
+    def test_import_from_subdirectory(self):
+        foo_code = '''
+        message Foo {
+            optional int32 a = 1;
+        }'''
+
+        bar_code = '''
+        import "dir/foo.proto";
+
+        message Bar {
+            optional Foo b = 3;
+        }'''
+
+        self.add_proto_file(foo_code, 'dir/foo.proto')
         self.add_proto_file(bar_code, 'bar.proto')
 
         self.run_compiler('bar.proto')
