@@ -1,4 +1,5 @@
 from collections import namedtuple
+from itertools import chain
 from os.path import splitext
 from protobuf3.compiler.plugin_api import FieldDescriptorProto
 
@@ -32,8 +33,11 @@ field_types = {
 
 
 class Compiler(object):
-    def __init__(self, fdesc):
+    def __init__(self, fdesc, tle_map):
         self.__fdesc = fdesc
+        self.__tle_map = tle_map
+
+        self.__top_level_elements = []
         self.__imports = {
             'protobuf3.message': {'Message'},
             'protobuf3.fields': set(),
@@ -41,6 +45,10 @@ class Compiler(object):
 
         self.__messages_code = []
         self.__fields_code = ['']
+
+        # This list should be completely built before start generating code
+        for item in chain(fdesc.message_type, fdesc.enum_type):
+            self.__top_level_elements.append(item.name)
 
         for message in fdesc.message_type:
             self.process_message(message)
@@ -122,11 +130,26 @@ class Compiler(object):
             field_labels[field.label]
         ]
 
+        type_name = None
         if field.type == FieldDescriptorProto.Type.TYPE_MESSAGE:
-            field_args.append("message_cls=" + field.type_name[1:])
+            type_name = field.type_name[1:]
+            field_args.append("message_cls=" + type_name)
 
         if field.type == FieldDescriptorProto.Type.TYPE_ENUM:
-            field_args.append("enum_cls=" + field.type_name[1:])
+            type_name = field.type_name[1:]
+            field_args.append("enum_cls=" + type_name)
+
+        if type_name:
+            # Because we can have reference to something in other class, like Foo.Bar
+            top_level_name = type_name.split('.')[0]
+            import sys
+            print(top_level_name, self.__top_level_elements, self.__tle_map, file=sys.stderr)
+            if top_level_name not in self.__top_level_elements:
+                file_to_import = splitext(self.__tle_map[top_level_name])[0]
+                if file_to_import not in self.__imports:
+                    self.__imports[file_to_import] = {top_level_name}
+                else:
+                    self.__imports[file_to_import].add(top_level_name)
 
         if 'default_value' in field:
             if field.type == FieldDescriptorProto.Type.TYPE_BOOL:
@@ -136,7 +159,7 @@ class Compiler(object):
             elif field.type == FieldDescriptorProto.Type.TYPE_BYTES:
                 default = "b'" + field.default_value + "'"
             elif field.type == FieldDescriptorProto.Type.TYPE_ENUM:
-                default = field.type_name[1:] + '.' + field.default_value
+                default = type_name + '.' + field.default_value
             else:
                 default = field.default_value
 

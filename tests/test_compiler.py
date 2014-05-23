@@ -2,6 +2,7 @@ from enum import Enum
 from importlib.machinery import SourceFileLoader
 from os import environ, path
 from subprocess import Popen, PIPE
+from sys import path as sys_path
 from tempfile import TemporaryDirectory
 from types import ModuleType
 from unittest import TestCase
@@ -50,8 +51,12 @@ class TestCompiler(TestCase):
     def return_module(self, name='test'):
         file_name = path.join(self.out_dir.name, name + '.py')
 
+        sys_path.append(self.out_dir.name)
         loader = SourceFileLoader(self._testMethodName, file_name)
-        return loader.load_module(self._testMethodName)
+        module = loader.load_module(self._testMethodName)
+        sys_path.remove(self.out_dir.name)
+
+        return module
 
     def test_simple_fields(self):
         msg_code = '''
@@ -284,4 +289,4 @@ class TestCompiler(TestCase):
         self.assertEqual(type(msg.b), bar.Foo)
 
         msg.parse_from_bytes(b'\x1a\x03\x08\x96\x01')
-        self.assertEqual(msg.b, 150)
+        self.assertEqual(msg.b.a, 150)
