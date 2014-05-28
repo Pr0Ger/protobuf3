@@ -55,3 +55,16 @@ class TestMessageField(TestCase):
 
         self.assertRaises(ValueError, failure)
 
+    def test_set_repeated_field(self):
+        msg = self.repeated_msg_cls()
+
+        msg.parse_from_bytes(b'\x1a\x03\x08\x96\x01\x1a\x04\x08\xc0\xc4\x07')
+
+        self.assertEqual(msg.c[0].a, 150)
+        self.assertEqual(msg.c[1].a, 123456)
+
+        msg.c[0].a = 123
+        msg.c[1].a = 456
+
+        self.assertEqual(msg.c[0].a, 123)
+        self.assertEqual(msg.c[1].a, 456)
