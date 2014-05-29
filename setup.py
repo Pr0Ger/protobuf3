@@ -9,5 +9,5 @@ setup(
     license='MIT',
     author='Pr0Ger',
     author_email='me@pr0ger.org',
-    description=''
+    description='Protocol buffers library for Python 3'
 )
