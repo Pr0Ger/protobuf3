@@ -322,3 +322,34 @@ class TestCompiler(TestCase):
 
         msg.parse_from_bytes(b'\x1a\x03\x08\x96\x01')
         self.assertEqual(msg.b.a, 150)
+
+    def test_public_import(self):
+        foo_code = '''
+        message Foo {
+            optional int32 a = 1;
+        }'''
+
+        bar_code = '''
+        import public "foo.proto";
+        '''
+
+        final_code = '''
+        import "bar.proto";
+
+        message Bar {
+            optional Foo b = 3;
+        }'''
+
+        self.add_proto_file(foo_code, 'foo.proto')
+        self.add_proto_file(bar_code, 'bar.proto')
+        self.add_proto_file(final_code, 'final.proto')
+
+        self.run_compiler('final.proto')
+
+        final = self.return_module('final')
+
+        msg = final.Bar()
+        self.assertEqual(type(msg.b), final.Foo)
+
+        msg.parse_from_bytes(b'\x1a\x03\x08\x96\x01')
+        self.assertEqual(msg.b.a, 150)
