@@ -142,8 +142,7 @@ class Compiler(object):
         if type_name:
             # Because we can have reference to something in other class, like Foo.Bar
             top_level_name = type_name.split('.')[0]
-            import sys
-            print(top_level_name, self.__top_level_elements, self.__tle_map, file=sys.stderr)
+
             if top_level_name not in self.__top_level_elements:
                 file_to_import = splitext(self.__tle_map[top_level_name])[0].replace('/', '.')
                 if file_to_import not in self.__imports:
