@@ -59,6 +59,9 @@ class TestBaseField(TestCase):
         self.repeated_msg.a[0] = 'not testing'
         self.assertEqual(self.repeated_msg.a[0], 'not testing')
 
+        self.repeated_msg.a[1] = 'not testing1'
+        self.assertEqual(self.repeated_msg.a[1], 'not testing')
+
     def test_append(self):
         self.assertEqual(len(self.repeated_msg.b), 0)
 
