@@ -11,10 +11,10 @@ class MessageField(BaseField):
 
     @property
     def default_value(self):
-        return self.__cls(parent_msg=(self._instance, self.field_number))
+        return self.__cls()
 
     def _convert_to_final_type(self, value):
-        msg = self.__cls(parent_msg=(self._instance, self.field_number))
+        msg = self.__cls()
         msg.parse_from_bytes(value)
 
         return msg

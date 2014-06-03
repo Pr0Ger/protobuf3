@@ -70,6 +70,10 @@ class BaseField(object):
             return self
         else:
             final_values = final_values[0]
+
+            if hasattr(final_values, '_set_parent'):
+                final_values._set_parent((instance, self.__field_number, None))
+
             return final_values
 
     def __getitem__(self, item):
@@ -80,7 +84,12 @@ class BaseField(object):
 
         wire_value = self._instance._get_wire_values(self.__field_number)[item]
 
-        return self._convert_to_final_type(wire_value.value)
+        final_value = self._convert_to_final_type(wire_value.value)
+
+        if hasattr(final_value, '_set_parent'):
+            final_value._set_parent((self._instance, self.__field_number, item))
+
+        return final_value
 
     def __setitem__(self, key, value):
         if not self._validate(value):

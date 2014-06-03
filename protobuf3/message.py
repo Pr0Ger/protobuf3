@@ -33,9 +33,9 @@ class Message(object):
 
         setattr(cls, field_name, field_instance)
 
-    def __init__(self, parent_msg=None):
+    def __init__(self):
         self.__wire_message = {}
-        self.__parent = parent_msg
+        self.__parent = None
 
     @staticmethod
     def _decode_field_signature(input_iterator):
@@ -144,6 +144,9 @@ class Message(object):
     def _get_wire_values(self, field_number):
         return self.__wire_message.get(field_number, [])
 
+    def _set_parent(self, parent_msg):
+        self.__parent = parent_msg
+
     def _set_wire_values(self, field_number, field_type, field_value, index=None, insert=False, append=False):
         if field_number not in self.__wire_message:
             self.__wire_message[field_number] = []
@@ -157,8 +160,8 @@ class Message(object):
             self.__wire_message[field_number] = [WireField(type=field_type, value=field_value)]
 
         if self.__parent:
-            msg, number = self.__parent
-            msg._set_wire_values(number, FIELD_VARIABLE_LENGTH, self.encode_to_bytes())
+            msg, number, idx = self.__parent
+            msg._set_wire_values(number, FIELD_VARIABLE_LENGTH, self.encode_to_bytes(), idx)
 
     def parse_from_bytes(self, bytes_array):
         self.__wire_message = {}
