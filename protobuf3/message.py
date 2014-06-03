@@ -151,7 +151,7 @@ class Message(object):
             self.__wire_message[field_number].append(WireField(type=field_type, value=field_value))
         elif insert:
             self.__wire_message[field_number].insert(index, WireField(type=field_type, value=field_value))
-        elif index:
+        elif index is not None:
             self.__wire_message[field_number][index] = WireField(type=field_type, value=field_value)
         else:
             self.__wire_message[field_number] = [WireField(type=field_type, value=field_value)]
