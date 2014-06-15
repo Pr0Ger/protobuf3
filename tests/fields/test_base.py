@@ -80,3 +80,22 @@ class TestBaseField(TestCase):
         self.assertEqual(self.repeated_msg.a[0], 'testing')
         self.assertEqual(self.repeated_msg.a[1], 'middle testing')
         self.assertEqual(self.repeated_msg.a[2], 'testing1')
+
+    def test_concurrent_len_in_different_instances(self):
+        class TestMsg(Message):
+            a = StringField(field_number=1, repeated=True)
+
+        msg_a = TestMsg()
+        msg_a.a.append('a')
+        msg_a.a.append('b')
+        self.assertEqual(len(msg_a.a), 2)
+
+        msg_b = TestMsg()
+        msg_b.a.append('a')
+        self.assertEqual(len(msg_b.a), 1)
+
+        msg_a_field = msg_a.a
+        msg_b_field = msg_b.a
+
+        self.assertEqual(len(msg_a_field), 2)
+        self.assertEqual(len(msg_b_field), 1)
