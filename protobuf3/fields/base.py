@@ -59,22 +59,20 @@ class BaseField(object):
     def __get__(self, instance, owner):
         self._instance = instance  # some functions should know it, but only __get__ receive it as parameter
 
-        wire_values = instance._get_wire_values(self.__field_number)
-
-        final_values = [self._convert_to_final_type(it.value) for it in wire_values]
-
-        if not final_values:
-            final_values.append(self.default_value)
-
         if self.__repeated:
             return self
         else:
-            final_values = final_values[0]
+            wire_values = instance._get_wire_values(self.__field_number)
 
-            if hasattr(final_values, '_set_parent'):
-                final_values._set_parent((instance, self.__field_number, None))
+            if not wire_values:
+                final_value = self.default_value
+            else:
+                final_value = self._convert_to_final_type(wire_values[0].value)
 
-            return final_values
+            if hasattr(final_value, '_set_parent'):
+                final_value._set_parent((instance, self.__field_number, None))
+
+            return final_value
 
     def __getitem__(self, item):
         assert self.__repeated
