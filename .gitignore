@@ -4,6 +4,7 @@
 *.iml
 
 # Python temp files
+.tox/
 .venv/
 build/
 dist/
