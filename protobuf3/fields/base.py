@@ -1,3 +1,6 @@
+from protobuf3.list_wrapper import ListWrapper
+
+
 class BaseField(object):
     DEFAULT_VALUE = None
     WIRE_TYPE = -1
@@ -14,8 +17,6 @@ class BaseField(object):
         if (default is not None) and (not self._validate(default)):
             raise ValueError
         self.__default = default
-
-        self._instance = None  # Some kind of dirty hack for list access methods, will be assigned in __get__
 
     @property
     def field_name(self):
@@ -57,10 +58,8 @@ class BaseField(object):
         return True
 
     def __get__(self, instance, owner):
-        self._instance = instance  # some functions should know it, but only __get__ receive it as parameter
-
         if self.__repeated:
-            return self
+            return ListWrapper(instance, self)
         else:
             wire_values = instance._get_wire_values(self.__field_number)
 
@@ -74,49 +73,10 @@ class BaseField(object):
 
             return final_value
 
-    def __getitem__(self, item):
-        assert self.__repeated
-
-        if isinstance(item, slice):
-            raise NotImplementedError
-
-        wire_value = self._instance._get_wire_values(self.__field_number)[item]
-
-        final_value = self._convert_to_final_type(wire_value.value)
-
-        if hasattr(final_value, '_set_parent'):
-            final_value._set_parent((self._instance, self.__field_number, item))
-
-        return final_value
-
-    def __setitem__(self, key, value):
-        if not self._validate(value):
-            raise ValueError
-
-        self._instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value), key)
-
     def __set__(self, instance, value):
         if not self._validate(value):
             raise ValueError
 
         instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value))
 
-    def __len__(self):
-        assert self._instance
 
-        if self.__repeated:
-            return len(self._instance._get_wire_values(self.__field_number))
-        else:
-            raise TypeError("Using len() isn't allowed for not repeated fields")
-
-    def append(self, value):
-        assert self._instance
-
-        self._instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value),
-                                         append=True)
-
-    def insert(self, index, value):
-        assert self._instance
-
-        self._instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value),
-                                         index=index, insert=True)

@@ -1,5 +1,6 @@
 from protobuf3.fields.base import BaseField
 from protobuf3.fields.string import StringField
+from protobuf3.list_wrapper import ListWrapper
 from protobuf3.message import Message
 from unittest import TestCase
 
@@ -42,7 +43,7 @@ class TestBaseField(TestCase):
         self.assertRaises(ValueError, StringField, field_number=1, default=0)
 
     def test_get_repeated_field(self):
-        self.assertEqual(type(self.repeated_msg.a), StringField)
+        self.assertTrue(isinstance(self.repeated_msg.a, ListWrapper))
 
     def test_len(self):
         self.assertEqual(len(self.repeated_msg.a), 2)
