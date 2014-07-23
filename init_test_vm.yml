@@ -1,0 +1,26 @@
+---
+- hosts: all
+  sudo: True
+  tasks:
+    - name: install git
+      apt: pkg=git
+
+    # Integration tests require it
+    - name: install protoc
+      apt: pkg=protobuf-compiler
+
+    - name: add repo with old python
+      apt_repository: repo='ppa:fkrull/deadsnakes'
+
+    - name: install python 3.3
+      apt: pkg=python3.3
+    - name: install python 3.4
+      apt: pkg=python3
+
+    - name: install tox
+      apt: pkg=python-tox
+
+    - name: create clear copy of repository
+      git: repo=/vagrant dest=/home/vagrant/protobuf3
+    - name: set proper rights for new folder
+      file: path=/home/vagrant/protobuf3 owner=vagrant state=directory recurse=yes
