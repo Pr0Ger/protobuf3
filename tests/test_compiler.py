@@ -265,7 +265,6 @@ class TestCompiler(TestCase):
         self.assertTrue(hasattr(msg_foo, 'test'))
         self.assertEqual(msg_foo.test, 789)
 
-
         msg_bar = msgs.Foo.Bar()
         msg_bar.parse_from_bytes(b'\xb0\x06\xc8\x03')
         self.assertTrue(hasattr(msg_bar, 'bar'))

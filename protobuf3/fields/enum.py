@@ -29,4 +29,3 @@ class EnumField(BaseField):
 
     def _validate(self, value):
         return isinstance(value, self.__cls)
-

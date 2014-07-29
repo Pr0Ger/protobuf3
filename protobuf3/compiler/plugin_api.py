@@ -21,24 +21,29 @@ class UninterpretedOption(Message):
 class MessageOptions(Message):
     message_set_wire_format = BoolField(field_number=1, optional=True)
     no_standard_descriptor_accessor = BoolField(field_number=2, optional=True)
-    uninterpreted_option = MessageField(field_number=999, repeated=True, message_cls=UninterpretedOption)
+    uninterpreted_option = MessageField(field_number=999, repeated=True,
+                                        message_cls=UninterpretedOption)
 
 
 class EnumOptions(Message):
     allow_alias = BoolField(field_number=2, optional=True, default=True)
-    uninterpreted_option = MessageField(field_number=999, repeated=True, message_cls=UninterpretedOption)
+    uninterpreted_option = MessageField(field_number=999, repeated=True,
+                                        message_cls=UninterpretedOption)
 
 
 class MethodOptions(Message):
-    uninterpreted_option = MessageField(field_number=999, repeated=True, message_cls=UninterpretedOption)
+    uninterpreted_option = MessageField(field_number=999, repeated=True,
+                                        message_cls=UninterpretedOption)
 
 
 class ServiceOptions(Message):
-    uninterpreted_option = MessageField(field_number=999, repeated=True, message_cls=UninterpretedOption)
+    uninterpreted_option = MessageField(field_number=999, repeated=True,
+                                        message_cls=UninterpretedOption)
 
 
 class EnumValueOptions(Message):
-    uninterpreted_option = MessageField(field_number=999, repeated=True, message_cls=UninterpretedOption)
+    uninterpreted_option = MessageField(field_number=999, repeated=True,
+                                        message_cls=UninterpretedOption)
 
 
 class FieldOptions(Message):
@@ -128,7 +133,9 @@ class DescriptorProto(Message):
 
     options = MessageField(field_number=7, optional=True, message_cls=MessageOptions)
 
-DescriptorProto.add_field('nested_type', MessageField(field_number=3, repeated=True, message_cls=DescriptorProto))
+
+DescriptorProto.add_field('nested_type',
+                          MessageField(field_number=3, repeated=True, message_cls=DescriptorProto))
 
 
 class MethodDescriptorProto(Message):
@@ -161,7 +168,8 @@ class FileOptions(Message):
         CODE_SIZE = 2
         LITE_RUNTIME = 3
 
-    optimize_for = EnumField(field_number=9, optional=True, enum_cls=OptimizeMode, default=OptimizeMode.SPEED)
+    optimize_for = EnumField(field_number=9, optional=True, enum_cls=OptimizeMode,
+                             default=OptimizeMode.SPEED)
 
     go_package = StringField(field_number=11, optional=True)
 
@@ -169,7 +177,8 @@ class FileOptions(Message):
     java_generic_services = BoolField(field_number=16, optional=True)
     py_generic_services = BoolField(field_number=16, optional=True)
 
-    uninterpreted_option = MessageField(field_number=999, repeated=True, message_cls=UninterpretedOption)
+    uninterpreted_option = MessageField(field_number=999, repeated=True,
+                                        message_cls=UninterpretedOption)
 
 
 class FileDescriptorProto(Message):

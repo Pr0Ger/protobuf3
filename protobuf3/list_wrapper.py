@@ -32,4 +32,5 @@ class ListWrapper(object):
 
     def insert(self, index, value):
         self.__instance._set_wire_values(self.__field.field_number, self.__field.WIRE_TYPE,
-                                         self.__field._convert_to_wire_type(value), index=index, insert=True)
+                                         self.__field._convert_to_wire_type(value), index=index,
+                                         insert=True)

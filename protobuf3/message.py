@@ -104,7 +104,8 @@ class Message(object):
 
         try:
             while True:
-                field_type, field_number, field_length = Message._decode_field_signature(input_iterator)
+                field_signature = Message._decode_field_signature(input_iterator)
+                field_type, field_number, field_length = field_signature
                 field_object = self.__fields.get(field_number, BaseField(field_number))
 
                 if field_type != field_object.WIRE_TYPE and field_object.WIRE_TYPE != -1:
@@ -121,13 +122,14 @@ class Message(object):
                 else:
                     raise NotImplementedError
 
+                wire_field = WireField(type=field_type, value=field_value)
                 if field_number in self.__wire_message:
                     if self.__wire_message[field_number][0].type != field_type:
                         raise ValueError
 
-                    self.__wire_message[field_number].append(WireField(type=field_type, value=field_value))
+                    self.__wire_message[field_number].append(wire_field)
                 else:
-                    self.__wire_message[field_number] = [WireField(type=field_type, value=field_value)]
+                    self.__wire_message[field_number] = [wire_field]
         except StopIteration:
             pass
 
@@ -147,17 +149,19 @@ class Message(object):
     def _set_parent(self, parent_msg):
         self.__parent = parent_msg
 
-    def _set_wire_values(self, field_number, field_type, field_value, index=None, insert=False, append=False):
+    def _set_wire_values(self, field_number, field_type, field_value, index=None, insert=False,
+                         append=False):
         if field_number not in self.__wire_message:
             self.__wire_message[field_number] = []
+        wire_field = WireField(type=field_type, value=field_value)
         if append:
-            self.__wire_message[field_number].append(WireField(type=field_type, value=field_value))
+            self.__wire_message[field_number].append(wire_field)
         elif insert:
-            self.__wire_message[field_number].insert(index, WireField(type=field_type, value=field_value))
+            self.__wire_message[field_number].insert(index, wire_field)
         elif index is not None:
-            self.__wire_message[field_number][index] = WireField(type=field_type, value=field_value)
+            self.__wire_message[field_number][index] = wire_field
         else:
-            self.__wire_message[field_number] = [WireField(type=field_type, value=field_value)]
+            self.__wire_message[field_number] = [wire_field]
 
         if self.__parent:
             msg, number, idx = self.__parent

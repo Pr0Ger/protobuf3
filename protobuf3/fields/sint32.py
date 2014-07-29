@@ -17,4 +17,3 @@ class SInt32Field(BaseField):
 
     def _validate(self, value):
         return isinstance(value, int) and -2 ** 31 <= value < 2 ** 31
-

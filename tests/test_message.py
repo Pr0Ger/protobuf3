@@ -5,7 +5,6 @@ from unittest import TestCase
 
 
 class TestMessage(TestCase):
-
     def test_decode_field_signature(self):
         tmp = Message()
 
@@ -35,7 +34,7 @@ class TestMessage(TestCase):
         data = [0b00000001]
         self.assertEqual(tmp._decode_varint(iter(data)), 1)
 
-        data = [0b10010110,  0b00000001]
+        data = [0b10010110, 0b00000001]
         self.assertEqual(tmp._decode_varint(iter(data)), 150)
 
         data = [0b10101100, 0b00000010]
@@ -116,7 +115,8 @@ class TestMessage(TestCase):
         tmp = Message()
 
         tmp._set_wire_values(1, FIELD_VARINT, 150)
-        self.assertDictEqual(tmp._Message__wire_message, {1: [WireField(type=FIELD_VARINT, value=150)]})
+        self.assertDictEqual(tmp._Message__wire_message,
+                             {1: [WireField(type=FIELD_VARINT, value=150)]})
 
     def test_parse_from_bytes(self):
         tmp = Message()
@@ -172,6 +172,7 @@ class TestMessage(TestCase):
     def test_add_field(self):
         class TestMsg(Message):
             pass
+
         TestMsg.add_field('a', StringField(field_number=2, optional=True))
 
         msg = TestMsg()

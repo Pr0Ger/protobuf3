@@ -5,7 +5,8 @@ class BaseField(object):
     DEFAULT_VALUE = None
     WIRE_TYPE = -1
 
-    def __init__(self, field_number=None, required=False, optional=False, repeated=False, default=None):
+    def __init__(self, field_number=None, required=False, optional=False, repeated=False,
+                 default=None):
         assert isinstance(field_number, int)
 
         self.__field_name = "undefined"
@@ -77,6 +78,5 @@ class BaseField(object):
         if not self._validate(value):
             raise ValueError
 
-        instance._set_wire_values(self.__field_number, self.WIRE_TYPE, self._convert_to_wire_type(value))
-
-
+        instance._set_wire_values(self.__field_number, self.WIRE_TYPE,
+                                  self._convert_to_wire_type(value))

@@ -24,4 +24,3 @@ class MessageField(BaseField):
 
     def _validate(self, value):
         return False  # Direct assignment is forbidden
-

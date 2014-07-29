@@ -56,5 +56,3 @@ class TestSInt32Field(TestCase):
 
         self.assertRaises(ValueError, failure)
         self.assertRaises(ValueError, overflow)
-
-

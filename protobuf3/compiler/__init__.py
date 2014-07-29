@@ -71,7 +71,8 @@ class Compiler(object):
 
         self.__fields_code.append('')
 
-        return '\n'.join(map(lambda x: '\n'.join(x), (imports, self.__messages_code, self.__fields_code)))
+        return '\n'.join(
+            map(lambda x: '\n'.join(x), (imports, self.__messages_code, self.__fields_code)))
 
     def process_message(self, message, embedded=''):
         _empty = True
@@ -173,4 +174,5 @@ class Compiler(object):
 
         self.__imports['protobuf3.fields'].add(field['field_type'])
 
-        self.__fields_code.append("{msg}.add_field('{field_name}', {field_type}({field_args}))".format(**field))
+        self.__fields_code.append(
+            "{msg}.add_field('{field_name}', {field_type}({field_args}))".format(**field))

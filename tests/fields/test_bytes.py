@@ -40,4 +40,3 @@ class TestBytesField(TestCase):
             msg.b = 123
 
         self.assertRaises(ValueError, failure)
-
