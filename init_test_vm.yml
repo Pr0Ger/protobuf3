@@ -17,8 +17,10 @@
     - name: install python 3.4
       apt: pkg=python3
 
+    - name: install pip
+      apt: pkg=python3-pip
     - name: install tox
-      apt: pkg=python-tox
+      pip: name=tox executable=pip3
 
     - name: create clear copy of repository
       git: repo=/vagrant dest=/home/vagrant/protobuf3
