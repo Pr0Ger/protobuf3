@@ -10,6 +10,7 @@ build/
 dist/
 protobuf3.egg-info/
 *.pyc
+.version
 
 # Vagrant temp files
 .vagrant/
