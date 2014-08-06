@@ -1,3 +1,4 @@
+from os import getenv
 from setuptools import setup
 
 dependencies = []
@@ -7,10 +8,20 @@ try:
 except ImportError:
     dependencies.append('enum34')
 
+version = '0.2'
+dev = True
+
+if dev:
+    version += 'dev'
+
+if getenv('TEAMCITY_PROJECT_NAME'):
+    if dev:
+        version += '{build.number}'
+    print("##teamcity[buildNumber '" + version + "']")
 
 setup(
     name='protobuf3',
-    version='0.1',
+    version=version,
     author='Pr0Ger',
     author_email='me@pr0ger.org',
     url='https://github.com/Pr0Ger/protobuf3',
