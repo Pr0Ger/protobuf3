@@ -16,7 +16,7 @@ if dev:
 
 if getenv('TEAMCITY_PROJECT_NAME'):
     if dev:
-        version += '{build.number}'
+        version += getenv('BUILD_NUMBER', '')
     print("##teamcity[buildNumber '" + version + "']")
 
 setup(
