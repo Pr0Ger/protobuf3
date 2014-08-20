@@ -13,11 +13,11 @@ Because Google doesn't want to support Python 3 in their protobuf implementation
 
 .. Images used in readme
 
-.. |pypi_version| image:: https://pypip.in/version/protobuf3/badge.svg?style=flat
+.. |pypi_version| image:: http://img.shields.io/pypi/v/protobuf3.svg?style=flat
     :target: https://pypi.python.org/pypi/protobuf3/
     :alt: Version
 
-.. |pypi_downloads| image:: https://pypip.in/download/protobuf3/badge.svg?style=flat
+.. |pypi_downloads| image:: http://img.shields.io/pypi/dm/protobuf3.svg?style=flat
     :target: https://pypi.python.org/pypi/protobuf3/
     :alt: Downloads
 
