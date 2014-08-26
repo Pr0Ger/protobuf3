@@ -11,10 +11,12 @@ except ImportError:
 teamcity_build = getenv('TEAMCITY_PROJECT_NAME', False)
 version = '0.2.0'  # Base version
 dev = True  # Final or not
+version_ui = version  # Compact version name without build metadata for TeamCity UI
 
 if dev:
     if teamcity_build:
         version += '-dev.{}+{}'.format(getenv('BUILD_NUMBER'), getenv('BUILD_VCS_NUMBER'))
+        version_ui += '-dev.{}'.format(getenv('BUILD_NUMBER'))
         print(version, file=open('.version', mode='w'))
     else:
         try:
@@ -24,7 +26,7 @@ if dev:
             version += '-alpha'  # Unknown revision, so assuming this is the earliest
 
 if teamcity_build:
-    print("##teamcity[buildNumber '" + version + "']")
+    print("##teamcity[buildNumber '" + version_ui + "']")
 
 setup(
     name='protobuf3',
