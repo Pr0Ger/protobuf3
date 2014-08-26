@@ -9,19 +9,19 @@ except ImportError:
     dependencies.append('enum34')
 
 teamcity_build = getenv('TEAMCITY_PROJECT_NAME', False)
-version = '0.2'  # Base version
+version = '0.2.0'  # Base version
 dev = True  # Final or not
 
 if dev:
     if teamcity_build:
-        version += 'dev' + getenv('BUILD_NUMBER', '0')
+        version += '-dev.{}+{}'.format(getenv('BUILD_NUMBER'), getenv('BUILD_VCS_NUMBER'))
         print(version, file=open('.version', mode='w'))
     else:
         try:
             with open('.version') as f:
                 version = f.readline().rstrip()
         except IOError:
-            version += 'dev0'  # Unknown revision, so assuming this is the earliest
+            version += '-alpha'  # Unknown revision, so assuming this is the earliest
 
 if teamcity_build:
     print("##teamcity[buildNumber '" + version + "']")
