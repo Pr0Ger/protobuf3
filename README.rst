@@ -21,6 +21,6 @@ Because Google doesn't want to support Python 3 in their protobuf implementation
     :target: https://pypi.python.org/pypi/protobuf3/
     :alt: Downloads
 
-.. |teamcity_status| image:: http://teamcity.pr0ger.org:8111/app/rest/builds/buildType:(id:Protobuf3_Build)/statusIcon
+.. |teamcity_status| image:: http://img.shields.io/teamcity/http/teamcity.pr0ger.org:8111/e/Protobuf3_Build.svg
     :target: http://teamcity.pr0ger.org:8111/viewType.html?buildTypeId=Protobuf3_Build
     :alt: Build status
