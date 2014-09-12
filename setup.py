@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from os import getenv
 from setuptools import setup
 
