@@ -6,7 +6,6 @@ Subpackages
 
 .. toctree::
 
-    protobuf3.compiler
     protobuf3.fields
 
 Submodules

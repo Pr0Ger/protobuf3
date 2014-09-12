@@ -1,23 +1,12 @@
-.. protobuf3 documentation master file, created by
-   sphinx-quickstart on Thu Sep 11 17:50:33 2014.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Protobuf3 |release| documentation
+=================================
 
-Welcome to protobuf3's documentation!
-=====================================
+Overview
+--------
 
-Contents:
+Protobuf3 is a library for interaction with serialized data encoded with `Protocol Buffers <https://github.com/google/protobuf>`_
+This documentation attempts to explain everything you need to know to use **protobuf3**.
 
 .. toctree::
-   :maxdepth: 2
-
-   api/modules
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+    installation
 
