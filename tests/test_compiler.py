@@ -5,7 +5,7 @@ from subprocess import Popen, PIPE
 from sys import path as sys_path
 from tempfile import TemporaryDirectory
 from types import ModuleType
-from unittest import TestCase, skip
+from unittest import TestCase
 
 
 class TestCompiler(TestCase):
@@ -371,7 +371,6 @@ class TestCompiler(TestCase):
         self.run_compiler()
         self.assertEqual(type(self.return_module()), ModuleType)
 
-    @skip('broken')
     def test_packages_import(self):
         foo_code = '''
         package foo;
@@ -386,9 +385,9 @@ class TestCompiler(TestCase):
         import "foo.proto";
 
         message Bar {
-            optional Foo b = 3;
+            optional foo.Foo b = 3;
         }'''
 
         self.add_proto_file(foo_code, 'foo.proto')
         self.add_proto_file(bar_code, 'bar.proto')
-        self.run_compiler()
+        self.run_compiler('foo.proto')
