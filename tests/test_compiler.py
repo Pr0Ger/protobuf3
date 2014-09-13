@@ -5,7 +5,7 @@ from subprocess import Popen, PIPE
 from sys import path as sys_path
 from tempfile import TemporaryDirectory
 from types import ModuleType
-from unittest import TestCase
+from unittest import TestCase, skip
 
 
 class TestCompiler(TestCase):
@@ -352,3 +352,43 @@ class TestCompiler(TestCase):
 
         msg.parse_from_bytes(b'\x1a\x03\x08\x96\x01')
         self.assertEqual(msg.b.a, 150)
+
+    def test_package(self):
+        package_code = '''
+        package tutorial;
+
+        enum PhoneType {
+            MOBILE = 0;
+            HOME = 1;
+            WORK = 2;
+        }
+
+        message Foo {
+            optional PhoneType a = 1;
+        }'''
+
+        self.add_proto_file(package_code)
+        self.run_compiler()
+        self.assertEqual(type(self.return_module()), ModuleType)
+
+    @skip('broken')
+    def test_packages_import(self):
+        foo_code = '''
+        package foo;
+
+        message Foo {
+            optional int32 a = 1;
+        }'''
+
+        bar_code = '''
+        package test1;
+
+        import "foo.proto";
+
+        message Bar {
+            optional Foo b = 3;
+        }'''
+
+        self.add_proto_file(foo_code, 'foo.proto')
+        self.add_proto_file(bar_code, 'bar.proto')
+        self.run_compiler()

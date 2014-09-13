@@ -133,11 +133,11 @@ class Compiler(object):
 
         type_name = None
         if field.type == FieldDescriptorProto.Type.TYPE_MESSAGE:
-            type_name = field.type_name[1:]
+            type_name = self.__strip_package_name(field.type_name[1:])
             field_args.append("message_cls=" + type_name)
 
         if field.type == FieldDescriptorProto.Type.TYPE_ENUM:
-            type_name = field.type_name[1:]
+            type_name = self.__strip_package_name(field.type_name[1:])
             field_args.append("enum_cls=" + type_name)
 
         if type_name:
@@ -176,3 +176,11 @@ class Compiler(object):
 
         self.__fields_code.append(
             "{msg}.add_field('{field_name}', {field_type}({field_args}))".format(**field))
+
+    def __strip_package_name(self, type_name):
+        names = type_name.split('.')
+
+        if names[0] == self.__fdesc.package:
+            return '.'.join(names[1:])
+        else:
+            return type_name
