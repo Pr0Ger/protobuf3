@@ -9,4 +9,6 @@ This documentation attempts to explain everything you need to know to use **prot
 
 .. toctree::
     installation
+    tutorial
+
 
