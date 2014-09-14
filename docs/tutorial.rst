@@ -125,3 +125,24 @@ Same code, but hand-written using this style:
         person = MessageField(field_number=1, repeated=True, message_cls=Person)
 
 
+The Protocol Buffer API
+-----------------------
+
+It's very similar to original implementation. Currently there is some difference how repeated field work
+(probably I make some comparability changes).
+
+.. doctest::
+    >>> person = address.Person()
+    >>> person.id = 1234
+    >>> person.name = "John Doe"
+    >>> person.email = "jdoe@example.com"
+    >>> number = address.Person.PhoneNumber()
+    >>> number.number = "123"
+    >>> person.phone.append(number)
+
+    >>> person.encode_to_bytes()
+    b'\n\x08John Doe\x10\xd2\t\x1a\x10jdoe@example.com"\x05\n\x03123'
+
+    >>> new_person = address.Person()
+    >>> new_person.parse_from_bytes(b'\n\x08John Doe\x10\xd2\t\x1a\x10jdoe@example.com"\x05\n\x03123')
+    >>> assert new_person.id == 1234
