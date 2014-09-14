@@ -132,6 +132,7 @@ It's very similar to original implementation. Currently there is some difference
 (probably I make some comparability changes).
 
 .. doctest::
+
     >>> person = address.Person()
     >>> person.id = 1234
     >>> person.name = "John Doe"
