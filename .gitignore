@@ -1,4 +1,7 @@
 
+# Generated docs
+docs/_build
+
 # IDEA files
 .idea/
 *.iml
