@@ -126,6 +126,15 @@ class TestMessage(TestCase):
         tmp.parse_from_bytes(data)
         self.assertDictEqual(tmp._Message__wire_message, expected_message)
 
+    def test_create_from_bytes(self):
+        data = [0x08, 0x96, 0x01]
+        expected_message = {1: [WireField(type=FIELD_VARINT, value=150)]}
+
+        tmp = Message.create_from_bytes(data)
+
+        self.assertTrue(isinstance(tmp, Message))
+        self.assertDictEqual(tmp._Message__wire_message, expected_message)
+
     def test_encode_to_bytes(self):
         class EncodedMessage(Message):
             a = StringField(field_number=2)

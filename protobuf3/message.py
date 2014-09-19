@@ -174,6 +174,12 @@ class Message(object):
 
         self._check_required_fields()
 
+    @classmethod
+    def create_from_bytes(cls, bytes_array):
+        tmp = cls()
+        tmp.parse_from_bytes(bytes_array)
+        return tmp
+
     def encode_to_bytes(self, ignore_unknown=False):
         self._check_required_fields()
 
