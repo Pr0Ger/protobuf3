@@ -207,18 +207,6 @@ class TestCompiler(TestCase):
         self.assertEqual(type(self.return_module()), ModuleType)
 
         msg_code = '''
-        enum EnumNotAllowingAlias {
-            UNKNOWN = 0;
-            STARTED = 1;
-            RUNNING = 1;
-        }'''
-
-        # Protoc will return warning, but compile this code
-        self.add_proto_file(msg_code)
-        self.run_compiler()
-        self.assertEqual(type(self.return_module()), ModuleType)
-
-        msg_code = '''
         enum EnumForciblyNotAllowingAlias {
             option allow_alias = false;
             UNKNOWN = 0;
