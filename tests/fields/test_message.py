@@ -68,3 +68,14 @@ class TestMessageField(TestCase):
 
         self.assertEqual(msg.c[0].a, 123)
         self.assertEqual(msg.c[1].a, 456)
+
+    def test_append(self):
+        msg = self.repeated_msg_cls()
+
+        self.assertEqual(len(msg.c), 0)
+        tmp = self.inner_msg_cls()
+        msg.c.append(tmp)
+        self.assertEqual(len(msg.c), 1)
+
+        tmp.a = 123
+        self.assertEqual(msg.c[0].a, 123)

@@ -30,6 +30,9 @@ class ListWrapper(object):
         self.__instance._set_wire_values(self.__field.field_number, self.__field.WIRE_TYPE,
                                          self.__field._convert_to_wire_type(value), append=True)
 
+        if hasattr(value, '_set_parent'):
+            value._set_parent((self.__instance, self.__field.field_number, self.__len__() - 1))
+
     def insert(self, index, value):
         self.__instance._set_wire_values(self.__field.field_number, self.__field.WIRE_TYPE,
                                          self.__field._convert_to_wire_type(value), index=index,
