@@ -11,8 +11,8 @@ except ImportError:
     dependencies.append('enum34')
 
 teamcity_build = getenv('TEAMCITY_PROJECT_NAME', False)
-version = '0.2.0'  # Base version
-dev = False  # Final or not
+version = '0.3.0'  # Base version
+dev = True  # Final or not
 version_ui = version  # Compact version name without build metadata for TeamCity UI
 
 if dev:
