@@ -1,4 +1,5 @@
 from protobuf3.fields.base import BaseField
+from protobuf3.fields.message import MessageField
 from protobuf3.fields.string import StringField
 from protobuf3.list_wrapper import ListWrapper
 from protobuf3.message import Message
@@ -100,3 +101,26 @@ class TestBaseField(TestCase):
 
         self.assertEqual(len(msg_a_field), 2)
         self.assertEqual(len(msg_b_field), 1)
+
+    def test_add(self):
+        class EmbMsg(Message):
+            a = StringField(field_number=1)
+
+        class TestMsg(Message):
+            a = StringField(field_number=1, repeated=True)
+            b = MessageField(field_number=2, repeated=True, message_cls=EmbMsg)
+
+        msg = TestMsg()
+
+        self.assertEqual(len(msg.a), 0)
+        value = msg.a.add()
+        self.assertTrue(isinstance(value, str))
+        self.assertEqual(len(msg.a), 1)
+
+        self.assertEqual(len(msg.b), 0)
+        value = msg.b.add()
+        self.assertTrue(isinstance(value, EmbMsg))
+        self.assertEqual(len(msg.b), 1)
+
+        value.a = 'asd'
+        self.assertEqual(msg.b[0].a, 'asd')
