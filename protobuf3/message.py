@@ -150,7 +150,7 @@ class Message(object):
         self.__parent = parent_msg
 
     def _set_wire_values(self, field_number, field_type, field_value, index=None, insert=False,
-                         append=False):
+                         append=False, remove=False):
         if field_number not in self.__wire_message:
             self.__wire_message[field_number] = []
         wire_field = WireField(type=field_type, value=field_value)
@@ -158,6 +158,8 @@ class Message(object):
             self.__wire_message[field_number].append(wire_field)
         elif insert:
             self.__wire_message[field_number].insert(index, wire_field)
+        elif remove:
+            del self.__wire_message[field_number][index]
         elif index is not None:
             self.__wire_message[field_number][index] = wire_field
         else:

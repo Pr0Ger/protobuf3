@@ -139,3 +139,18 @@ class TestBaseField(TestCase):
 
         self.assertEqual(msg.a, ['asd', 'qwe'])
         self.assertEqual(msg.a, ('asd', 'qwe'))
+
+    def test_repeated_del(self):
+        class TestMsg(Message):
+            a = StringField(field_number=1, repeated=True)
+
+        msg = TestMsg()
+        msg.a.append('asd')
+        msg.a.append('qwe')
+        msg.a.append('zxc')
+
+        self.assertEqual(msg.a, ['asd', 'qwe', 'zxc'])
+
+        del msg.a[1]
+
+        self.assertEqual(msg.a, ['asd', 'zxc'])
