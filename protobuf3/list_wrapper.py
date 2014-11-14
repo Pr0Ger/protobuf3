@@ -26,6 +26,18 @@ class ListWrapper(object):
     def __len__(self):
         return len(self.__instance._get_wire_values(self.__field.field_number))
 
+    def __eq__(self, other):
+        if not isinstance(other, (list, tuple)):
+            return False
+
+        if self.__len__() != len(other):
+            return False
+
+        for (a, b) in zip(self, other):
+            if a != b:
+                return False
+        return True
+
     def append(self, value):
         self.__instance._set_wire_values(self.__field.field_number, self.__field.WIRE_TYPE,
                                          self.__field._convert_to_wire_type(value), append=True)

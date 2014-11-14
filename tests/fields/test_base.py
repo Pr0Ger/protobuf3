@@ -124,3 +124,18 @@ class TestBaseField(TestCase):
 
         value.a = 'asd'
         self.assertEqual(msg.b[0].a, 'asd')
+
+    def test_repeated_equal(self):
+        class TestMsg(Message):
+            a = StringField(field_number=1, repeated=True)
+
+        msg = TestMsg()
+        msg.a.append('asd')
+        msg.a.append('qwe')
+
+        self.assertNotEqual(msg.a, 'asd')
+        self.assertNotEqual(msg.a, ['asd'])
+        self.assertNotEqual(msg.a, ['qwe', 'asd'])
+
+        self.assertEqual(msg.a, ['asd', 'qwe'])
+        self.assertEqual(msg.a, ('asd', 'qwe'))
