@@ -40,7 +40,7 @@ class ListWrapper(object):
 
     def __delitem__(self, key):
         self.__instance._set_wire_values(self.__field.field_number, self.__field.WIRE_TYPE,
-                                        None, index=key, remove=True)
+                                         None, index=key, remove=True)
 
     def append(self, value):
         self.__instance._set_wire_values(self.__field.field_number, self.__field.WIRE_TYPE,
