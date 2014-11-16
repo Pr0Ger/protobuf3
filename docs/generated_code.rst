@@ -74,9 +74,7 @@ There is no difference with original implementation
 Repeated Fields
 ~~~~~~~~~~~~~~~
 
-I copied this section from original documentation, but commented some lines, that currently not implemented:
-
-#. `.extend() <http://youtrack.pr0ger.org/issue/PB3-27>`_
+I copied this section from original documentation.
 
 .. code-block:: protobuf
 
@@ -88,12 +86,12 @@ I copied this section from original documentation, but commented some lines, tha
 
     foo = Foo()
     foo.nums.append(15)        # Appends one value
-    #foo.nums.extend([32, 47]) # Appends an entire list
+    foo.nums.extend([32, 47]) # Appends an entire list
 
     assert len(foo.nums) == 3
     assert foo.nums[0] == 15
     assert foo.nums[1] == 32
-    #assert foo.nums == [15, 32, 47]
+    assert foo.nums == [15, 32, 47]
 
     foo.nums[1] = 56    # Reassigns a value
     assert foo.nums[1] == 56
