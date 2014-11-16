@@ -162,3 +162,8 @@ class TestBaseField(TestCase):
         del msg.a[1]
 
         self.assertEqual(msg.a, ['asd', 'zxc'])
+
+    def test_repeated_clear(self):
+        self.assertEqual(len(self.repeated_msg.a), 2)
+        del self.repeated_msg.a[:]
+        self.assertEqual(len(self.repeated_msg.a), 0)

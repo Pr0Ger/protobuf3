@@ -97,7 +97,7 @@ I copied this section from original documentation.
     assert foo.nums[1] == 56
     for i in foo.nums:  # Loops and print
       print i
-    #del foo.nums[:]    # Clears list (works just like in a Python list)
+    del foo.nums[:]    # Clears list (works just like in a Python list)
 
 Repeated Message Fields
 ~~~~~~~~~~~~~~~~~~~~~~~
