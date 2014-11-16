@@ -78,10 +78,6 @@ I copied this section from original documentation, but commented some lines, tha
 
 #. `.extend() <http://youtrack.pr0ger.org/issue/PB3-27>`_
 
-#. I'm not sure about comparison with list, I'll check later and fix this moment
-
-#. Currently there is no easy way for delete item from list. `I'm working on it <http://youtrack.pr0ger.org/issue/PB3-28>`_
-
 .. code-block:: protobuf
 
     message Foo {
