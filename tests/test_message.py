@@ -202,3 +202,20 @@ class TestMessage(TestCase):
 
         msg.parse_from_bytes(b'\x12\x07\x74\x65\x73\x74\x69\x6E\x67')
         self.assertEqual('a' in msg, True)
+
+    def test_remove_field_value(self):
+        class TestMsg(Message):
+            a = StringField(field_number=1, optional=True)
+            b = StringField(field_number=2, repeated=True)
+
+        msg = TestMsg()
+        msg.a = 'asd'
+        self.assertEqual('a' in msg, True)
+        del msg.a
+        self.assertEqual('a' in msg, False)
+
+        msg.b.append('1')
+        msg.b.append('2')
+        self.assertEqual('b' in msg, True)
+        del msg.b
+        self.assertEqual('b' in msg, False)

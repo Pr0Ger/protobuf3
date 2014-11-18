@@ -46,8 +46,8 @@ There is some difference how you check fields presence:
     assert not 'foo' in message
     message.foo = 123
     assert 'foo' in message
-
-Also, currently there is no way for removing field (look at `PB3-23 <http://youtrack.pr0ger.org/issue/PB3-26>`_)
+    del message.foo
+    assert not 'foo' in message
 
 Singular Message Fields
 ~~~~~~~~~~~~~~~~~~~~~~~

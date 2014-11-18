@@ -169,6 +169,9 @@ class Message(object):
             msg, number, idx = self.__parent
             msg._set_wire_values(number, FIELD_VARIABLE_LENGTH, self.encode_to_bytes(), idx)
 
+    def _drop_wire_value(self, field_number):
+        del self.__wire_message[field_number]
+
     def parse_from_bytes(self, bytes_array):
         self.__wire_message = {}
         input_iterator = iter(bytes_array)

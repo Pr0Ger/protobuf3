@@ -80,3 +80,6 @@ class BaseField(object):
 
         instance._set_wire_values(self.__field_number, self.WIRE_TYPE,
                                   self._convert_to_wire_type(value))
+
+    def __delete__(self, instance):
+        instance._drop_wire_value(self.__field_number)
