@@ -213,3 +213,23 @@ class Message(object):
             return False
 
         return field.field_number in self.__wire_message
+
+    def __repr__(self):
+        result = ['<Message({})>'.format(self.__class__.__name__)]
+        for field_number in self.__wire_message:
+            if field_number in self.__fields:
+                field = self.__fields[field_number]
+                result.append('{}{}:'.format(' ' * 4, repr(field)))
+                for it in self.__wire_message[field_number]:
+                    value_repr = str(field._convert_to_final_type(it.value))
+                    value_repr = ''.join(map(lambda x: ' ' * 8 + x, value_repr.split('\n')))
+                    result.append(value_repr)
+            else:
+                result.append(
+                    '{}Unknown field with id={} wire_type={}:'.format(' ' * 4, field_number,
+                                                                      self.__wire_message[
+                                                                          field_number][0].type))
+                for it in self.__wire_message[field_number]:
+                    result.append('{}{}'.format(' ' * 8, it.value))
+
+        return '\n'.join(result)

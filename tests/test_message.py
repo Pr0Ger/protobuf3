@@ -219,3 +219,21 @@ class TestMessage(TestCase):
         self.assertEqual('b' in msg, True)
         del msg.b
         self.assertEqual('b' in msg, False)
+
+    def test_repr(self):
+        class EncodedMessage(Message):
+            a = StringField(field_number=2, required=True)
+
+        msg_with_unknown = b'\x08\x96\x01\x12\x07\x74\x65\x73\x74\x69\x6E\x67'
+        msg_without_unknown = b'\x12\x07\x74\x65\x73\x74\x69\x6E\x67'
+
+        msg = EncodedMessage()
+
+        msg.parse_from_bytes(msg_with_unknown)
+
+        correct_repr = '''<Message(EncodedMessage)>
+    Unknown field with id=1 wire_type=0:
+        150
+    <StringField(id=2, required)>:
+        testing'''
+        self.assertEqual(repr(msg), correct_repr)

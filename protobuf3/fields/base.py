@@ -83,3 +83,13 @@ class BaseField(object):
 
     def __delete__(self, instance):
         instance._drop_wire_value(self.__field_number)
+
+    def __repr__(self):
+        field_type = ''
+        if self.required:
+            field_type = 'required'
+        if self.optional:
+            field_type = 'optional'
+        if self.repeated:
+            field_type = 'repeated'
+        return '<{}(id={}, {})>'.format(self.__class__.__name__, self.field_number, field_type)
