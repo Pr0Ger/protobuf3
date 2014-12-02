@@ -21,29 +21,39 @@ class UninterpretedOption(Message):
 class MessageOptions(Message):
     message_set_wire_format = BoolField(field_number=1, optional=True)
     no_standard_descriptor_accessor = BoolField(field_number=2, optional=True)
+    deprecated = BoolField(field_number=3, optional=True, default=False)
+    map_entry = BoolField(field_number=7, optional=True)
     uninterpreted_option = MessageField(field_number=999, repeated=True,
                                         message_cls=UninterpretedOption)
 
 
 class EnumOptions(Message):
     allow_alias = BoolField(field_number=2, optional=True, default=True)
+    deprecated = BoolField(field_number=3, optional=True, default=False)
     uninterpreted_option = MessageField(field_number=999, repeated=True,
                                         message_cls=UninterpretedOption)
 
 
 class MethodOptions(Message):
+    deprecated = BoolField(field_number=33, optional=True, default=False)
     uninterpreted_option = MessageField(field_number=999, repeated=True,
                                         message_cls=UninterpretedOption)
 
 
 class ServiceOptions(Message):
+    deprecated = BoolField(field_number=33, optional=True, default=False)
     uninterpreted_option = MessageField(field_number=999, repeated=True,
                                         message_cls=UninterpretedOption)
 
 
 class EnumValueOptions(Message):
+    deprecated = BoolField(field_number=1, optional=True, default=False)
     uninterpreted_option = MessageField(field_number=999, repeated=True,
                                         message_cls=UninterpretedOption)
+
+
+class OneofDescriptorProto(Message):
+    name = StringField(field_number=1, optional=True)
 
 
 class FieldOptions(Message):
@@ -102,6 +112,8 @@ class FieldDescriptorProto(Message):
 
     options = MessageField(field_number=8, message_cls=FieldOptions)
 
+    oneof_index = Int32Field(field_number=9, optional=True)
+
 
 class EnumValueDescriptorProto(Message):
     name = StringField(field_number=1, optional=True)
@@ -133,6 +145,8 @@ class DescriptorProto(Message):
 
     options = MessageField(field_number=7, optional=True, message_cls=MessageOptions)
 
+    oneof_decl = MessageField(field_number=8, repeated=True, message_cls=OneofDescriptorProto)
+
 
 DescriptorProto.add_field('nested_type',
                           MessageField(field_number=3, repeated=True, message_cls=DescriptorProto))
@@ -145,6 +159,9 @@ class MethodDescriptorProto(Message):
     output_type = StringField(field_number=3, optional=True)
 
     options = MessageField(field_number=4, optional=True, message_cls=MethodOptions)
+
+    client_streaming = BoolField(field_number=5, optional=True, default=False)
+    server_streaming = BoolField(field_number=6, optional=True, default=False)
 
 
 class ServiceDescriptorProto(Message):
@@ -174,8 +191,10 @@ class FileOptions(Message):
     go_package = StringField(field_number=11, optional=True)
 
     cc_generic_services = BoolField(field_number=16, optional=True)
-    java_generic_services = BoolField(field_number=16, optional=True)
-    py_generic_services = BoolField(field_number=16, optional=True)
+    java_generic_services = BoolField(field_number=17, optional=True)
+    py_generic_services = BoolField(field_number=18, optional=True)
+
+    deprecated = BoolField(field_number=23, optional=True, default=False)
 
     uninterpreted_option = MessageField(field_number=999, repeated=True,
                                         message_cls=UninterpretedOption)
@@ -197,6 +216,8 @@ class FileDescriptorProto(Message):
     options = MessageField(field_number=8, optional=True, message_cls=FileOptions)
 
     # optional SourceCodeInfo source_code_info = 9;
+
+    syntax = StringField(field_number=12, optional=True)
 
 
 class CodeGeneratorRequest(Message):
