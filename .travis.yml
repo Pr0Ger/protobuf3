@@ -1,0 +1,7 @@
+language: python
+python:
+  - "3.3"
+  - "3.4"
+install:
+    - if [[ $TRAVIS_PYTHON_VERSION == '3.3' ]]; then travis_retry pip install enum34; fi
+script: nosetests
