@@ -1,12 +1,14 @@
+from distutils.version import StrictVersion
 from enum import Enum
 from importlib.machinery import SourceFileLoader
 from os import environ, makedirs, path
-from subprocess import Popen, PIPE
+from subprocess import check_output, Popen, PIPE
 from sys import path as sys_path
 from tempfile import TemporaryDirectory
 from types import ModuleType
-from unittest import TestCase
+from unittest import TestCase, skipIf
 
+protoc_version = StrictVersion(check_output(["protoc", "--version"])[10:-1].decode())
 
 class TestCompiler(TestCase):
     def setUp(self):
@@ -192,6 +194,7 @@ class TestCompiler(TestCase):
 
         self.assertEqual(type(self.return_module()), ModuleType)
 
+    @skipIf(protoc_version < StrictVersion("2.5.0"), "allow_alias requires protoc >= 2.5.0")
     def test_enum_alias(self):
         msg_code = '''
         enum EnumAllowingAlias {
@@ -310,6 +313,7 @@ class TestCompiler(TestCase):
         msg.parse_from_bytes(b'\x1a\x03\x08\x96\x01')
         self.assertEqual(msg.b.a, 150)
 
+    @skipIf(protoc_version < StrictVersion("2.5.0"), "public import requires protoc >= 2.5.0")
     def test_public_import(self):
         foo_code = '''
         message Foo {
