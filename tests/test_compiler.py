@@ -8,7 +8,8 @@ from tempfile import TemporaryDirectory
 from types import ModuleType
 from unittest import TestCase, skipIf
 
-protoc_version = StrictVersion(check_output(["protoc", "--version"])[10:-1].decode())
+protoc_version = StrictVersion(check_output("protoc --version || true", shell=True)[10:-1].decode())
+
 
 class TestCompiler(TestCase):
     def setUp(self):
