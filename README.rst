@@ -62,6 +62,6 @@ VM by using **vagrant ssh**. Finally, run tests by launching **cd protobuf3 && t
     :target: https://pypi.python.org/pypi/protobuf3/
     :alt: Downloads
 
-.. |teamcity_status| image:: http://img.shields.io/teamcity/http/teamcity.pr0ger.org:8111/e/Protobuf3_Build.svg?style=flat
-    :target: http://teamcity.pr0ger.org:8111/viewType.html?buildTypeId=Protobuf3_Build
+.. |teamcity_status| image:: http://img.shields.io/travis/Pr0Ger/protobuf3.svg?style=flat
+    :target: https://travis-ci.org/Pr0Ger/protobuf3
     :alt: Build status
