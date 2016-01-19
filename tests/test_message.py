@@ -31,6 +31,9 @@ class TestMessage(TestCase):
     def test_decode_varint(self):
         tmp = Message()
 
+        data = [0b00000000]
+        self.assertEqual(tmp._decode_varint(iter(data)), 0)
+
         data = [0b00000001]
         self.assertEqual(tmp._decode_varint(iter(data)), 1)
 
@@ -43,6 +46,7 @@ class TestMessage(TestCase):
     def test_encode_varint(self):
         tmp = Message()
 
+        self.assertEqual(tmp._encode_varint(0), b'\x00')
         self.assertEqual(tmp._encode_varint(1), b'\x01')
         self.assertEqual(tmp._encode_varint(150), b'\x96\x01')
         self.assertEqual(tmp._encode_varint(300), b'\xAC\x02')
