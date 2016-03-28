@@ -72,6 +72,7 @@ class Message(object):
     def _decode_varint(self, data):
         # Not very pretty, but fast
         varint = 0
+        offset = 0
         for offset, byte in enumerate(data[self.__read_offset:]):
             varint += (1 << 7) ** offset * (byte & 0b01111111)
             if not byte & (1 << 7):
