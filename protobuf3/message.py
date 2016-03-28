@@ -1,5 +1,4 @@
 from collections import namedtuple
-from functools import reduce
 from protobuf3.fields.base import BaseField
 from protobuf3.wire_types import *
 
