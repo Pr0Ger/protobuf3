@@ -105,36 +105,33 @@ class Message(object):
             self.__read_offset += n
             return result
 
-        try:
-            while self.__read_offset < len(data):
-                field_signature = self._decode_field_signature(data)
-                field_type, field_number, field_length = field_signature
-                field_object = self.__fields.get(field_number, BaseField(field_number))
+        while self.__read_offset < len(data):
+            field_signature = self._decode_field_signature(data)
+            field_type, field_number, field_length = field_signature
+            field_object = self.__fields.get(field_number, BaseField(field_number))
 
-                if field_type != field_object.WIRE_TYPE and field_object.WIRE_TYPE != -1:
+            if field_type != field_object.WIRE_TYPE and field_object.WIRE_TYPE != -1:
+                raise ValueError
+
+            if field_type == FIELD_VARINT:
+                field_value = self._decode_varint(data)
+            elif field_type == FIELD_FIXED64:
+                field_value = __read_n_bytes(8)
+            elif field_type == FIELD_VARIABLE_LENGTH:
+                field_value = __read_n_bytes(field_length)
+            elif field_type == FIELD_FIXED32:
+                field_value = __read_n_bytes(4)
+            else:
+                raise NotImplementedError
+
+            wire_field = WireField(type=field_type, value=field_value)
+            if field_number in self.__wire_message:
+                if self.__wire_message[field_number][0].type != field_type:
                     raise ValueError
 
-                if field_type == FIELD_VARINT:
-                    field_value = self._decode_varint(data)
-                elif field_type == FIELD_FIXED64:
-                    field_value = __read_n_bytes(8)
-                elif field_type == FIELD_VARIABLE_LENGTH:
-                    field_value = __read_n_bytes(field_length)
-                elif field_type == FIELD_FIXED32:
-                    field_value = __read_n_bytes(4)
-                else:
-                    raise NotImplementedError
-
-                wire_field = WireField(type=field_type, value=field_value)
-                if field_number in self.__wire_message:
-                    if self.__wire_message[field_number][0].type != field_type:
-                        raise ValueError
-
-                    self.__wire_message[field_number].append(wire_field)
-                else:
-                    self.__wire_message[field_number] = [wire_field]
-        except StopIteration:
-            pass
+                self.__wire_message[field_number].append(wire_field)
+            else:
+                self.__wire_message[field_number] = [wire_field]
 
     def _check_required_fields(self):
         missing_fields = []
