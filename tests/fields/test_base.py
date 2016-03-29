@@ -15,10 +15,10 @@ class TestBaseField(TestCase):
             a = StringField(field_number=1, repeated=True)
             b = StringField(field_number=2, repeated=True)
 
-        raw_message = [
+        raw_message = bytes([
             0x0A, 0x07, 0x74, 0x65, 0x73, 0x74, 0x69, 0x6E, 0x67,
             0x0A, 0x08, 0x74, 0x65, 0x73, 0x74, 0x69, 0x6E, 0x67, 0x31
-        ]
+        ])
 
         self.empty_msg = EmptyMessage()
         self.repeated_msg = TestMessage()
