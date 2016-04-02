@@ -18,10 +18,10 @@ class TestInt64Field(TestCase):
 
     def test_get_bounds(self):
         msg = self.msg_cls()
-
         msg.parse_from_bytes(b'\x08\xff\xff\xff\xff\xff\xff\xff\xff\x7f')
         self.assertEqual(msg.a, 2 ** 63 - 1)
 
+        msg = self.msg_cls()
         msg.parse_from_bytes(b'\x08\x80\x80\x80\x80\x80\x80\x80\x80\x80\x01')
         self.assertEqual(msg.a, -(2 ** 63))
 

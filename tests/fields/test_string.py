@@ -13,7 +13,7 @@ class TestStringField(TestCase):
     def test_get(self):
         msg = self.msg_cls()
 
-        msg.parse_from_bytes([0x12, 0x07, 0x74, 0x65, 0x73, 0x74, 0x69, 0x6E, 0x67])
+        msg.parse_from_bytes(bytes([0x12, 0x07, 0x74, 0x65, 0x73, 0x74, 0x69, 0x6E, 0x67]))
         self.assertEqual(msg.b, 'testing')
 
     def test_default_get(self):
