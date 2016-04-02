@@ -55,6 +55,9 @@ class TestBaseField(TestCase):
 
         self.assertRaises(IndexError, lambda: self.repeated_msg.a[3])
 
+    def test_get_slice(self):
+        self.assertRaises(NotImplementedError, lambda: self.repeated_msg.a[0:1])
+
     def test_set_item(self):
         self.assertEqual(self.repeated_msg.a[0], 'testing')
 
@@ -63,6 +66,10 @@ class TestBaseField(TestCase):
 
         self.repeated_msg.a[1] = 'not testing1'
         self.assertEqual(self.repeated_msg.a[1], 'not testing1')
+
+    def test_set_invalid(self):
+        from operator import setitem
+        self.assertRaises(ValueError, lambda: setitem(self.repeated_msg.a, 0, 1.0))
 
     def test_append(self):
         self.assertEqual(len(self.repeated_msg.b), 0)
