@@ -168,7 +168,14 @@ class TestBaseField(TestCase):
         del self.repeated_msg.a[:]
         self.assertEqual(len(self.repeated_msg.a), 0)
 
-    def test_repr(self):
+    def test_repr_required(self):
         field = BaseField(field_number=1, required=True)
-
         self.assertEqual(repr(field), '<BaseField(id=1, required)>')
+
+    def test_repr_optional(self):
+        field = BaseField(field_number=1, optional=True)
+        self.assertEqual(repr(field), '<BaseField(id=1, optional)>')
+
+    def test_repr_repeated(self):
+        field = BaseField(field_number=1, repeated=True)
+        self.assertEqual(repr(field), '<BaseField(id=1, repeated)>')
